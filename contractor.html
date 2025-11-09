@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OmniSolutions — Contractor Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+<style>
+/* === DARK DASHBOARD THEME === */
+:root {
+  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
+  --brand:#8a5cff; --brand2:#6a4cff;
+  --chip:#262248; --chip2:#1e1a3b;
+  --good:#22d3a6; --bad:#ff5c7a;
+  --shadow:0 14px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;font-family:Poppins,system-ui;color:var(--ink);
+  background:radial-gradient(1200px 800px at 10% -10%, #1a1740, #0b0a18 50%, #090818 100%);
+}
+a{color:inherit;text-decoration:none;}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid #ffffff1a;
+  background:#141229;position:sticky;top:0;z-index:10;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.badge{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  color:#0b0622;font-weight:900;box-shadow:0 8px 22px #8a5cff55;
+}
+.header .actions{display:flex;gap:10px;}
+.btn{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  border:none;color:#100a29;font-weight:800;
+  padding:8px 12px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow);
+}
+.btn.secondary{background:#231f41;color:#fff;}
+.btn.danger{background:#ff5c7a;color:#fff;}
+.btn:hover{opacity:.92;}
+.container{width:min(1200px,94vw);margin:18px auto;}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid #ffffff18;border-radius:16px;box-shadow:var(--shadow);
+  padding:14px;margin-bottom:14px;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+.stat{background:#201c3c;border:1px solid #ffffff16;border-radius:14px;padding:14px;text-align:center;}
+.stat b{display:block;font-size:22px;}
+.tabs{display:flex;gap:8px;margin:8px 0 12px;}
+.tab{background:#231f41;border:1px solid #ffffff14;color:#fff;padding:8px 10px;border-radius:999px;cursor:pointer;}
+.tab.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0c0625;border:none;}
+.view{display:none;}
+.view.active{display:block;}
+.table{width:100%;border-collapse:separate;border-spacing:0 8px;}
+.table th{font-size:12px;text-align:left;color:#cdd3f6;padding:2px 6px;}
+.table td{background:#201c3c;border:1px solid #ffffff15;padding:8px;border-radius:8px;font-size:14px;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0;}
+select,input,textarea{
+  background:#211d3b;border:1px solid #ffffff18;border-radius:10px;
+  color:#fff;padding:8px;width:100%;
+}
+textarea{min-height:80px;}
+.inline{display:inline-block;min-width:160px;}
+.center{display:flex;align-items:center;gap:8px;}
+footer{color:#aab0cf;text-align:center;margin:28px 0 40px;}
+.login{max-width:420px;margin:80px auto;}
+.login h2{text-align:center;}
+.login .card{padding:18px;}
+label{font-size:12px;color:#cfd3f5;margin-bottom:4px;display:block;}
+.note{color:#c8ccee;font-size:12px;margin-top:6px;}
+.bad{color:#ff98ac;font-size:13px;}
+.good{color:#87f0d9;font-size:13px;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="badge">OS</div>
+    <div>
+      <b>OmniSolutions</b>
+      <div style="font-size:12px;color:#bfc3e0">Contractor Dashboard</div>
+    </div>
+  </div>
+  <div class="actions">
+    <a href="index.html" class="btn secondary">← Back to Site</a>
+    <button id="logoutBtn" class="btn danger" style="display:none">Log out</button>
+  </div>
+</header>
+
+<!-- LOGIN VIEW -->
+<main id="loginView" class="login">
+  <div class="card">
+    <h2>Contractor Login</h2>
+    <p class="note">Use your phone number (used during sign-up). On first login you’ll set a PIN.</p>
+    <div style="display:grid;gap:10px;margin-top:10px">
+      <div>
+        <label>Phone number</label>
+        <input id="loginPhone" placeholder="e.g., 0821234567" />
+      </div>
+      <div>
+        <label>PIN (set on first login)</label>
+        <input id="loginPin" placeholder="4–6 digits" />
+      </div>
+      <button id="loginBtn" class="btn">Enter Dashboard</button>
+      <div id="loginMsg" class="bad" style="display:none"></div>
+      <div class="note">No account? Click “Join as Contractor” on the homepage.</div>
+    </div>
+  </div>
+</main>
+
+<!-- DASHBOARD VIEW -->
+<main id="appView" class="container" style="display:none">
+  <div class="grid2">
+    <div class="card">
+      <div class="grid2">
+        <div class="stat"><small>Total Jobs</small><b id="statJobs">0</b></div>
+        <div class="stat"><small>Avg Rating</small><b id="statRating">—</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="grid2">
+        <div class="stat"><small>Pending</small><b id="statPending">0</b></div>
+        <div class="stat"><small>Completed</small><b id="statDone">0</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="jobs">Jobs</div>
+    <div class="tab" data-tab="reviews">Reviews</div>
+    <div class="tab" data-tab="settings">Settings</div>
+  </div>
+
+  <!-- JOBS TAB -->
+  <section id="view-jobs" class="view active card">
+    <div class="controls">
+      <select id="filterStatus" class="inline">
+        <option value="ALL">All statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+      <input id="filterSearch" class="inline" placeholder="Search name/area/service…" />
+    </div>
+    <div style="overflow:auto">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Time</th><th>Job ID</th><th>Customer</th><th>Phone</th>
+            <th>Area</th><th>Service</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="jobsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- REVIEWS TAB -->
+  <section id="view-reviews" class="view card">
+    <div style="overflow:auto">
+      <table class="table">
+        <thead>
+          <tr><th>Job</th><th>Stars</th><th>Comment</th><th>When</th></tr>
+        </thead>
+        <tbody id="reviewsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SETTINGS TAB -->
+  <section id="view-settings" class="view card">
+    <div class="grid2">
+      <div><label>Business Name</label><input id="setBusiness" /></div>
+      <div><label>Contact Person</label><input id="setContact" /></div>
+      <div><label>Phone (login ID)</label><input id="setPhone" disabled /></div>
+      <div><label>Telegram Chat ID (optional for direct alerts)</label><input id="setTelegram" placeholder="e.g., 123456789" /></div>
+      <div><label>Areas (semicolon separated)</label><input id="setAreas" placeholder="e.g., Durban; Umhlanga" /></div>
+      <div><label>Specialty</label><input id="setSpecialty" placeholder="e.g., Geysers, Rewiring" /></div>
+      <div><label>Website / Portfolio</label><input id="setWebsite" placeholder="https://…" /></div>
+      <div><label>Change PIN</label><input id="setPin" placeholder="leave blank to keep" /></div>
+    </div>
+    <div class="center" style="margin-top:10px">
+      <button id="saveSettings" class="btn">Save Settings</button>
+      <div id="saveMsg" class="good" style="display:none">Saved!</div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2025 OmniSolutions — Contractor Dashboard</footer>
+
+<script>
+/* ========= SHARED STORAGE HELPERS (same keys as index.html) ========= */
+function load(k, f){ try{ return JSON.parse(localStorage.getItem(k) || JSON.stringify(f)); } catch{ return f; } }
+function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+function partners(){ return load('omni_partners', []); }
+function savePartners(v){ save('omni_partners', v); }
+function jobs(){ return load('omni_jobs', []); }
+function saveJobs(v){ save('omni_jobs', v); }
+function reviews(){ return load('omni_reviews', []); }
+function saveReviews(v){ save('omni_reviews', v); }
+
+/* ========= TELEGRAM ALERTS (central channel + optional per-contractor) ========= */
+const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs";
+const ADMIN_CHAT_IDS = ["8187670531","8558139331"]; // your two channels
+async function sendTelegram(text, specificId=null){
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const ids = specificId ? [specificId] : ADMIN_CHAT_IDS;
+  for(const chat_id of ids){
+    await fetch(url, { method:"POST", headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id, text, parse_mode:"Markdown" })
+    });
+  }
+}
+
+/* ========= AUTH: phone + PIN (created on first login) ========= */
+let ME = null;
+const loginView = document.getElementById('loginView');
+const appView = document.getElementById('appView');
+const loginBtn = document.getElementById('loginBtn');
+const loginMsg = document.getElementById('loginMsg');
+const logoutBtn = document.getElementById('logoutBtn');
+
+loginBtn.onclick = () => {
+  const phone = document.getElementById('loginPhone').value.trim();
+  const pin = document.getElementById('loginPin').value.trim();
+  let list = partners();
+  let p = list.find(x => (x.phone||'').replace(/\D/g,'') === phone.replace(/\D/g,''));
+  if(!p){ showLoginError("We couldn't find your number. Ask admin to add you on the homepage."); return; }
+  if(!p.pin){
+    if(!pin || pin.length < 4){ showLoginError("Create a 4–6 digit PIN."); return; }
+    p.pin = pin; savePartners(list);
+  } else {
+    if(pin !== p.pin){ showLoginError("Wrong PIN."); return; }
+  }
+  ME = p;
+  loginView.style.display='none';
+  appView.style.display='block';
+  logoutBtn.style.display='inline-block';
+  hydrateSettings();
+  renderAll();
+};
+logoutBtn.onclick = () => { ME = null; appView.style.display='none'; loginView.style.display='block'; logoutBtn.style.display='none'; };
+function showLoginError(msg){ loginMsg.textContent = msg; loginMsg.style.display = 'block'; setTimeout(()=>loginMsg.style.display='none', 2500); }
+
+/* ========= TABS ========= */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-'+t.dataset.tab).classList.add('active');
+  };
+});
+
+/* ========= STATS + JOBS RENDER ========= */
+const jobsBody = document.getElementById('jobsBody');
+const filterStatus = document.getElementById('filterStatus');
+const filterSearch = document.getElementById('filterSearch');
+filterStatus.onchange = renderJobs;
+filterSearch.oninput = renderJobs;
+
+function renderAll(){
+  renderStats();
+  renderJobs();
+  renderReviews();
+}
+function renderStats(){
+  const myJobs = jobs().filter(j => j.contractorPhone === ME.phone);
+  document.getElementById('statJobs').textContent = myJobs.length;
+  document.getElementById('statPending').textContent = myJobs.filter(j=>j.status==='Pending').length;
+  document.getElementById('statDone').textContent = myJobs.filter(j=>j.status==='Completed').length;
+  const myReviews = reviews().filter(r => r.contractorPhone === ME.phone);
+  const avg = myReviews.length ? (myReviews.reduce((a,b)=>a+b.stars,0)/myReviews.length).toFixed(1) : '—';
+  document.getElementById('statRating').textContent = avg;
+}
+
+function renderJobs(){
+  const all = jobs().filter(j => j.contractorPhone === ME.phone);
+  const q = (filterSearch.value||'').toLowerCase();
+  const st = filterStatus.value;
+  const list = all.filter(j => (st==='ALL' || j.status===st) &&
+    ((j.customerName||'').toLowerCase().includes(q) ||
+     (j.area||'').toLowerCase().includes(q) ||
+     (j.service||'').toLowerCase().includes(q)));
+  jobsBody.innerHTML = '';
+  list.sort((a,b)=> new Date(b.created) - new Date(a.created)).forEach(j=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${new Date(j.created).toLocaleString()}</td>
+      <td>${j.id}</td>
+      <td>${j.customerName}</td>
+      <td>${j.customerPhone}</td>
+      <td>${j.area}</td>
+      <td>${j.service}</td>
+      <td>
+        <select data-id="${j.id}" class="js-status">
+          ${['Pending','In Progress','Completed'].map(s=>`<option ${s===j.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="center">
+        <button class="btn secondary" data-id="${j.id}" data-act="details">Details</button>
+        <button class="btn" data-id="${j.id}" data-act="review">Add Review</button>
+      </td>`;
+    jobsBody.appendChild(tr);
+  });
+}
+
+/* ========= JOB ACTIONS ========= */
+document.addEventListener('change', async (e)=>{
+  if(e.target.matches('.js-status')){
+    const id = e.target.getAttribute('data-id');
+    const s = e.target.value;
+    const list = jobs();
+    const j = list.find(x=>x.id===id);
+    if(j){ j.status = s; saveJobs(list); renderStats(); }
+    if(s==='Completed'){
+      await sendTelegram(`✅ *JOB COMPLETED*\n${j.service} — ${j.area}\nBy: ${ME.business}\nJob: ${j.id}\n${new Date().toLocaleString()}`);
+      if(ME.telegramId){ await sendTelegram(`✅ You marked job ${j.id} as Completed.`, ME.telegramId); }
+    }
+  }
+});
+document.addEventListener('click', (e)=>{
+  const t = e.target;
+  if(t.dataset.act==='details'){
+    const j = jobs().find(x=>x.id===t.dataset.id);
+    if(!j) return;
+    alert(
+      `JOB ${j.id}\n\n`+
+      `Customer: ${j.customerName}\nPhone: ${j.customerPhone}\nArea: ${j.area}\nService: ${j.service}\n\n`+
+      `Notes:\n${j.notes||'-'}`
+    );
+  }
+  if(t.dataset.act==='review'){
+    const j = jobs().find(x=>x.id===t.dataset.id);
+    if(!j) return;
+    const stars = parseInt(prompt("Customer rating (1-5):","5")||"0",10);
+    if(!stars || stars<1 || stars>5) return;
+    const comment = prompt("Customer comment (optional):","Great workmanship!");
+    const list = reviews();
+    list.push({
+      jobId: j.id,
+      contractorPhone: ME.phone,
+      stars,
+      comment: (comment||'').trim(),
+      when: new Date().toISOString()
+    });
+    saveReviews(list);
+    renderReviews();
+    renderStats();
+  }
+});
+
+/* ========= REVIEWS RENDER ========= */
+const reviewsBody = document.getElementById('reviewsBody');
+function renderReviews(){
+  const list = reviews()
+    .filter(r => r.contractorPhone === ME.phone)
+    .sort((a,b)=> new Date(b.when) - new Date(a.when));
+  reviewsBody.innerHTML = '';
+  list.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.jobId}</td>
+      <td>${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</td>
+      <td>${r.comment || ''}</td>
+      <td>${new Date(r.when).toLocaleString()}</td>
+    `;
+    reviewsBody.appendChild(tr);
+  });
+}
+
+/* ========= SETTINGS ========= */
+function hydrateSettings(){
+  document.getElementById('setBusiness').value = ME.business || '';
+  document.getElementById('setContact').value  = ME.contact  || '';
+  document.getElementById('setPhone').value    = ME.phone    || '';
+  document.getElementById('setTelegram').value = ME.telegramId || '';
+  document.getElementById('setAreas').value    = ME.areas    || '';
+  document.getElementById('setSpecialty').value= ME.specialty|| '';
+  document.getElementById('setWebsite').value  = ME.website  || '';
+}
+document.getElementById('saveSettings').onclick = ()=>{
+  const list = partners();
+  const me = list.find(x => x.phone === ME.phone);
+  if(me){
+    me.business  = (document.getElementById('setBusiness').value || '').trim();
+    me.contact   = (document.getElementById('setContact').value  || '').trim();
+    me.telegramId= (document.getElementById('setTelegram').value || '').trim();
+    me.areas     = (document.getElementById('setAreas').value    || '').trim();
+    me.specialty = (document.getElementById('setSpecialty').value|| '').trim();
+    me.website   = (document.getElementById('setWebsite').value  || '').trim();
+    const newPin = (document.getElementById('setPin').value      || '').trim();
+    if(newPin){ me.pin = newPin; document.getElementById('setPin').value = ''; }
+    savePartners(list);
+    ME = me;
+    document.getElementById('saveMsg').style.display='block';
+    setTimeout(()=>document.getElementById('saveMsg').style.display='none', 1500);
+  }
+};
+</script>
+</body>
+</html>
