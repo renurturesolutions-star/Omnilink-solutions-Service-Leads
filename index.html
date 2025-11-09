@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OmniSolutions — All-in-One Service Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
+  --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
+  --good:#22d3a6; --bad:#ff5c7a;
+  --shadow:0 14px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:Poppins,system-ui; color:var(--ink);
+  background:radial-gradient(1200px 800px at 10% -10%, #1a1740, #0b0a18 50%, #090818 100%);
+  overflow-x:hidden;
+}
+h1{margin:0;font-size:clamp(22px,3.5vw,40px);letter-spacing:.2px}
+a{color:inherit}
+.badge{
+  width:62px;height:62px;border-radius:16px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  font-weight:900;color:#0a061b;box-shadow:0 10px 26px #8a5cff55;margin:auto;
+}
+.sub{color:var(--muted);margin-top:6px;font-size:15px}
+.hero{width:min(1200px,94vw);margin:30px auto 10px;position:relative;text-align:center}
+.cta-bar{width:min(1200px,94vw);margin:10px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0b0622;
+  border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)
+}
+.btn.secondary{background:#231f41;color:#fff}
+.btn.danger{background:#ff5c7a;color:white}
+.btn:hover{opacity:.92}
+.top-right{position:absolute;top:10px;right:12px;display:flex;gap:8px}
+.chip{background:var(--chip);border:1px solid #ffffff14;padding:8px 10px;border-radius:999px;color:#e8e9ff}
+
+.section{width:min(1200px,94vw);margin:28px auto}
+.section h2{margin:14px 0 10px;font-size:22px}
+.group{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid #ffffff18;border-radius:16px;padding:14px 14px;box-shadow:var(--shadow);margin-bottom:14px}
+.group-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.group-title{font-weight:800}
+.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px;transition:max-height .35s ease}
+.bubble{background:#231f41;color:#fff;padding:12px;border-radius:999px;text-align:center;font-weight:700;cursor:pointer;border:1px solid #ffffff14}
+.bubble:hover{background:linear-gradient(135deg,var(--brand),var(--brand2));transform:translateY(-2px)}
+.hidden{display:none}
+
+.testimonials{margin-top:28px;text-align:center}
+.t-card{display:inline-block;background:#231f41;border:1px solid #ffffff14;padding:18px;border-radius:16px;max-width:720px;box-shadow:var(--shadow)}
+.stars{color:#ffd166;margin:6px 0}
+
+.live{margin-top:12px;text-align:center;color:#bfc3e0}
+
+.chat-popup{
+  position:fixed;bottom:96px;right:20px;width:340px;max-height:460px;
+  background:#18152f;border:1px solid #ffffff1a;border-radius:14px;
+  display:none;flex-direction:column;z-index:50;box-shadow:var(--shadow)
+}
+.chat-head{padding:10px 12px;border-bottom:1px solid #ffffff18;font-weight:800}
+.chat-log{padding:10px 12px;flex:1;overflow:auto}
+.msg{max-width:80%;padding:9px 11px;border-radius:12px;margin:6px 0;background:var(--chip2)}
+.msg.bot{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0e0727}
+.msg.user{align-self:flex-end;background:#2e2b48}
+.chat-compose{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff18}
+input,textarea{width:100%;padding:10px;border:none;border-radius:10px;background:#211d3b;color:#fff}
+canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
+
+.modal-backdrop{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:60}
+.modal{width:min(900px,94vw);background:#151230;border:1px solid #ffffff20;border-radius:18px;padding:16px;max-height:84vh;overflow:auto}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.ok{display:none;color:var(--good);font-weight:800;margin-top:8px}
+
+.table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:8px}
+.table th{font-size:12px;text-align:left;color:#cdd3f6}
+.table td{background:#201c3c;border:1px solid #ffffff15;padding:8px;border-radius:8px}
+.tools{display:flex;gap:8px;margin:6px 0 2px}
+
+.footer{color:#aab0cf;text-align:center;margin:36px 0 60px}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<section class="hero">
+  <div class="top-right">
+    <button class="btn secondary" id="openAdmin">🔒 Admin</button>
+    <button class="btn secondary" id="openContractor">🧰 Join as Contractor</button>
+  </div>
+  <div class="badge">OS</div>
+  <h1>OmniSolutions — All-in-One Service Network</h1>
+  <p class="sub">From repairs to renovations, from sales to support — every solution under one roof.</p>
+  <div class="cta-bar">
+    <span class="chip">Cheapest. Fastest. Vetted partners.</span>
+    <span class="chip">Avg response 1–2 hrs</span>
+    <span class="chip">24/7 emergencies</span>
+  </div>
+</section>
+
+<section class="section" id="catalog">
+  <h2>Choose a category, then tap a service:</h2>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🏠 Property & Maintenance</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🧹 Cleaning & Hygiene</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🔧 Renovations & Construction</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🏡 Property Sales & Rentals</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">💼 Business & Professional</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🔒 Security, Energy & Tech</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🚗 Automotive & Machinery</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🧑‍🤝‍🧑 Personal & Lifestyle</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+
+  <div class="group">
+    <div class="group-header" data-toggle>
+      <div class="group-title">🌍 Environmental & Utilities</div><div>▼</div>
+    </div>
+    <div class="group-grid"></div>
+  </div>
+</section>
+
+<section class="section testimonials">
+  <div class="t-card">
+    <div>“Booked a plumber and had someone at my door in 45 minutes. Pricing was fair and super clean work.”</div>
+    <div class="stars">★★★★★</div>
+    <div style="color:#cfd6ff">— Nomsa M., Durban</div>
+  </div>
+</section>
+
+<section class="section live">
+  <div id="liveFeed">💬 Sipho in Pretoria just booked Roofing • Sarah in Randburg booked Cleaning • Yusuf in Cape Town booked CCTV</div>
+</section>
+
+<!-- Contractor modal -->
+<div class="modal-backdrop" id="cBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3>🚨 New Partner Sign-Up</h3>
+      <button class="btn" id="cClose" style="padding:6px 10px;font-size:12px">Close</button>
+    </div>
+    <p style="color:#cbd0ef;margin-top:4px">Join the OmniSolutions network — we route paying jobs to you.</p>
+    <div class="row" style="margin-top:6px">
+      <input id="bizName" placeholder="Business / Contractor Name">
+      <input id="ownerName" placeholder="Contact Person">
+    </div>
+    <div class="row">
+      <input id="bizEmail" placeholder="Email">
+      <input id="bizPhone" placeholder="Phone">
+    </div>
+    <div class="row">
+      <select id="bizCategory"></select>
+      <input id="areas" placeholder="Service Areas (e.g., Durban, JHB, Cape Town)">
+    </div>
+    <div class="row">
+      <input id="specialty" placeholder="Specialty (e.g., Geysers, Rewiring, Deep Cleaning)">
+      <input id="website" placeholder="Website / Portfolio (optional)">
+    </div>
+    <button class="btn" id="conSubmit" style="margin-top:8px">Submit</button>
+    <div class="ok" id="conOk">✅ Submitted! You’ll appear in local matches immediately.</div>
+  </div>
+</div>
+
+<!-- Admin modal -->
+<div class="modal-backdrop" id="aBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3>🔧 Admin — Partners & Leads</h3>
+      <button class="btn" id="aClose" style="padding:6px 10px;font-size:12px">Close</button>
+    </div>
+    <div style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="exportPartners">Export Partners CSV</button>
+      <button class="btn" id="exportLeads">Export Leads CSV</button>
+      <button class="btn danger" id="clearPartners">Clear Partners</button>
+      <button class="btn danger" id="clearLeads">Clear Leads</button>
+    </div>
+
+    <h4 style="margin:14px 0 6px">Partners</h4>
+    <div style="overflow:auto;max-height:28vh">
+      <table class="table" id="partnersTable">
+        <thead>
+          <tr><th>Business</th><th>Contact</th><th>Phone</th><th>Category</th><th>Service</th><th>Areas</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h4 style="margin:18px 0 6px">Leads</h4>
+    <div style="overflow:auto;max-height:28vh">
+      <table class="table" id="leadsTable">
+        <thead>
+          <tr><th>Name</th><th>Phone</th><th>Area</th><th>Category</th><th>Service</th><th>Notes</th><th>Time</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Chat -->
+<div class="chat-popup" id="chat">
+  <div class="chat-head">💜 OmniSolutions Assistant</div>
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chat-compose">
+    <input id="chatInput" placeholder="Type your answer… then Enter" autocomplete="off" />
+  </div>
+</div>
+
+<div class="footer">© 2025 OmniSolutions — All rights reserved</div>
+
+<script>
+/* ================== Settings (Telegram) ================== */
+const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs";
+const TELEGRAM_CHAT_IDS = ["8187670531","8558139331"]; // you + client
+const ADMIN_PIN = "2468"; // change this if you want
+
+async function sendTelegram(text){
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  for(const chat_id of TELEGRAM_CHAT_IDS){
+    await fetch(url,{method:"POST",headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id, text, parse_mode:"Markdown"})});
+  }
+}
+
+/* ================== Data: categories & services ================== */
+const CATEGORY_MAP = {
+  "Property & Maintenance":[
+    "Plumbing","Electrical","Roofing","Carpentry","Painting","Handyman","HVAC","Flooring",
+    "Masonry","Gutter Cleaning","Pest Control","Landscaping","Pool Maintenance","Appliance Repair",
+    "Waterproofing","Irrigation","Window Repair","Glass/Glazing","Ceilings & Drywall","Tiling"
+  ],
+  "Cleaning & Hygiene":[
+    "Home Cleaning","Office Cleaning","Deep Cleaning","Move-in/Move-out","Carpet Cleaning","Window Cleaning",
+    "Janitorial Services","Sanitizing","Laundry Collection","Upholstery Cleaning","Post-Construction Cleaning"
+  ],
+  "Renovations & Construction":[
+    "General Building","Kitchen Renovations","Bathroom Renovations","Home Extensions","Concrete Work",
+    "Steelwork & Welding","Joinery","Scaffolding","Paving","Drywall & Ceilings","Waterproofing","Project Management"
+  ],
+  "Property Sales & Rentals":[
+    "Real Estate Agent","Property Management","Valuations","Apartment Rentals","Commercial Sales",
+    "Short-Term Letting","Estate Photography","Home Staging","Bond Origination"
+  ],
+  "Business & Professional":[
+    "Accounting","Legal Advice","Bookkeeping","IT Support","Web Design","Digital Marketing","Branding/Printing",
+    "Admin Assistance","Courier Services","Recruitment","Company Registrations"
+  ],
+  "Security, Energy & Tech":[
+    "CCTV Installation","Alarm Systems","Access Control","Electric Fencing","Gate Motors","Networking & Wi-Fi",
+    "Smart Home Setup","Solar Installation","Inverters & Batteries","Generator Install/Maintenance"
+  ],
+  "Automotive & Machinery":[
+    "Vehicle Service/Repair","Tyre Fitment","Panel Beating","Auto Electrician","Towing",
+    "Truck Maintenance","Diesel Mechanics","Air Compressors","Forklifts/Plant"
+  ],
+  "Personal & Lifestyle":[
+    "Personal Trainer","Tutors","Event Planning","Catering","Beauty Services","Barber/Hair",
+    "Pet Grooming","Childcare","Elder Care","Photography/Videography","DJ/Entertainment"
+  ],
+  "Environmental & Utilities":[
+    "Boreholes/Water","Water Treatment","Waste Disposal","Recycling","Tree Felling",
+    "Energy Audits","Garden Services","Fire Safety/Extinguishers","Environmental Compliance"
+  ]
+};
+
+/* Build the catalog UI */
+const groups = document.querySelectorAll('.group');
+const catNames = Object.keys(CATEGORY_MAP);
+groups.forEach((grp,i)=>{
+  const grid = grp.querySelector('.group-grid');
+  const header = grp.querySelector('[data-toggle]');
+  const cname = catNames[i];
+  CATEGORY_MAP[cname].forEach(svc=>{
+    const b = document.createElement('div');
+    b.className='bubble';
+    b.textContent = svc;
+    b.onclick = ()=>startChat(cname, svc);
+    grid.appendChild(b);
+  });
+  header.onclick = ()=>{ grid.classList.toggle('hidden'); };
+});
+
+/* ================== Contractor signup ================== */
+const cBackdrop = document.getElementById('cBackdrop');
+document.getElementById('openContractor').onclick = ()=> {
+  cBackdrop.style.display='grid';
+  populateCategorySelect();
+};
+document.getElementById('cClose').onclick = ()=> cBackdrop.style.display='none';
+function populateCategorySelect(){
+  const sel = document.getElementById('bizCategory');
+  sel.innerHTML = '';
+  for(const [cat, services] of Object.entries(CATEGORY_MAP)){
+    const og = document.createElement('optgroup'); og.label = cat;
+    services.forEach(s=>{
+      const opt = document.createElement('option'); opt.value = `${cat}::${s}`; opt.textContent = s;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  }
+}
+
+function loadPartners(){ try{ return JSON.parse(localStorage.getItem('omni_partners')||'[]'); } catch{ return []; } }
+function savePartners(list){ localStorage.setItem('omni_partners', JSON.stringify(list)); }
+
+document.getElementById('conSubmit').onclick = async ()=>{
+  const name = document.getElementById('bizName').value.trim();
+  const contact = document.getElementById('ownerName').value.trim();
+  const email = document.getElementById('bizEmail').value.trim();
+  const phone = document.getElementById('bizPhone').value.trim();
+  const svcSel = document.getElementById('bizCategory').value; // "Category::Service"
+  const areas = document.getElementById('areas').value.trim();
+  const specialty = document.getElementById('specialty').value.trim();
+  const website = document.getElementById('website').value.trim();
+
+  if(!name || !phone || !svcSel){ alert('Please fill name, phone and service.'); return; }
+  const [category, service] = svcSel.split('::');
+
+  const partners = loadPartners();
+  partners.push({
+    id: 'p_'+Date.now(),
+    business: name, contact, email, phone,
+    category, service, areas, specialty, website,
+    created: new Date().toISOString()
+  });
+  savePartners(partners);
+
+  const msg = `🚨 *New Partner Alert*\n🏢 ${name}\n👤 ${contact}\n📞 ${phone}\n📧 ${email}\n🧰 ${category} → ${service}\n📍 Areas: ${areas}\n⭐ Specialty: ${specialty}\n🔗 ${website||'-'}\n🕒 ${new Date().toLocaleString()}`;
+  await sendTelegram(msg);
+
+  document.getElementById('conOk').style.display='block';
+  confettiBurst();
+  setTimeout(()=>{ cBackdrop.style.display='none'; document.getElementById('conOk').style.display='none'; }, 2200);
+};
+
+/* ================== Seed sample partners (for demo) ================== */
+(function seed(){
+  const partners = loadPartners();
+  if(partners.length) return;
+  const samples = [
+    {business:"RapidFlow Plumbing",contact:"Thabo",phone:"0821112222",category:"Property & Maintenance",service:"Plumbing",areas:"Cape Town; Milnerton; Table View",specialty:"Geysers"},
+    {business:"SparkRight Electrical",contact:"Nomsa",phone:"0832223333",category:"Property & Maintenance",service:"Electrical",areas:"JHB; Randburg; Sandton",specialty:"Rewiring"},
+    {business:"SkyRoof",contact:"Pieter",phone:"0843334444",category:"Property & Maintenance",service:"Roofing",areas:"Pretoria; Centurion",specialty:"Leaks"},
+    {business:"CrystalClean Pros",contact:"Aisha",phone:"0815556666",category:"Cleaning & Hygiene",service:"Deep Cleaning",areas:"Durban; Umhlanga",specialty:"Post-renovation"},
+    {business:"GuardSight CCTV",contact:"Zed",phone:"0827778888",category:"Security, Energy & Tech",service:"CCTV Installation",areas:"Cape Town; Bellville",specialty:"Retail"},
+    {business:"GreenLeaf Landscapes",contact:"Kea",phone:"0721114444",category:"Property & Maintenance",service:"Landscaping",areas:"JHB; Fourways",specialty:"Irrigation"},
+    {business:"SunGrid Solar",contact:"Mandla",phone:"0715551234",category:"Security, Energy & Tech",service:"Solar Installation",areas:"Pretoria; Midrand",specialty:"Hybrid Systems"},
+    {business:"AutoFix Panel",contact:"Riaz",phone:"0793219876",category:"Automotive & Machinery",service:"Panel Beating",areas:"Cape Town; Epping",specialty:"Insurance"},
+    {business:"TopTile Projects",contact:"Rene",phone:"0605557777",category:"Renovations & Construction",service:"Tiling",areas:"JHB; Roodepoort",specialty:"Porcelain"},
+    {business:"FreshAir HVAC",contact:"Chris",phone:"0659081122",category:"Property & Maintenance",service:"HVAC",areas:"Durban; Pinetown",specialty:"Commercial"}
+  ];
+  savePartners(samples);
+})();
+
+/* ================== Leads store (local) ================== */
+function loadLeads(){ try{ return JSON.parse(localStorage.getItem('omni_leads')||'[]'); } catch{ return []; } }
+function saveLeads(list){ localStorage.setItem('omni_leads', JSON.stringify(list)); }
+
+/* ================== Chatbot ================== */
+const chat = document.getElementById('chat');
+const chatLog = document.getElementById('chatLog');
+const chatInput = document.getElementById('chatInput');
+
+let CURRENT = {category:null, service:null, name:null, phone:null, area:null, notes:null, step:0};
+
+function say(txt, who='bot'){
+  const d = document.createElement('div');
+  d.className = 'msg '+(who==='bot'?'bot':'user');
+  d.textContent = txt;
+  chatLog.appendChild(d);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+function startChat(category, service){
+  CURRENT = {category, service, step:0};
+  chat.style.display='flex';
+  chatLog.innerHTML='';
+  say(`Hi 👋 I'm your OmniSolutions assistant. Let's sort your *${service}* request.`);
+  setTimeout(()=>say("What’s your full name?"), 600);
+}
+chatInput.addEventListener('keydown', async (e)=>{
+  if(e.key!=='Enter') return;
+  const val = chatInput.value.trim(); if(!val) return;
+  say(val,'user'); chatInput.value='';
+
+  switch(CURRENT.step){
+    case 0:
+      CURRENT.name = val;
+      say(`Nice to meet you, ${CURRENT.name}! 📞 Your phone number?`);
+      CURRENT.step = 1; break;
+    case 1:
+      CURRENT.phone = val.replace(/\D/g,'');
+      say("📍 Which area/suburb are you in?");
+      CURRENT.step = 2; break;
+    case 2:
+      CURRENT.area = val;
+      say("📝 Briefly describe the issue or what you need.");
+      CURRENT.step = 3; break;
+    case 3:
+      CURRENT.notes = val;
+
+      const partners = loadPartners().filter(p =>
+        p.category===CURRENT.category &&
+        p.service===CURRENT.service &&
+        (p.areas || '').toLowerCase().includes((CURRENT.area||'').toLowerCase())
+      ).slice(0,10);
+
+      if(partners.length){
+        say(`🔎 I found ${partners.length} local ${CURRENT.service} provider(s) in ${CURRENT.area}:`);
+        partners.forEach((p,i)=>{
+          say(`${i+1}. ${p.business} — ${p.contact} — ${p.phone}`);
+        });
+      }else{
+        say(`😅 No saved partners in ${CURRENT.area} yet for ${CURRENT.service}. We’ll still dispatch your request.`);
+      }
+
+      // Save lead locally
+      const leads = loadLeads();
+      const leadObj = {
+        id:'l_'+Date.now(), name:CURRENT.name, phone:CURRENT.phone, area:CURRENT.area,
+        category:CURRENT.category, service:CURRENT.service, notes:CURRENT.notes,
+        time:new Date().toLocaleString()
+      };
+      leads.push(leadObj); saveLeads(leads);
+
+      // Telegram
+      const lead = `🧰 *NEW LEAD*\nCategory: ${CURRENT.category}\nService: ${CURRENT.service}\n👤 ${CURRENT.name}\n📞 ${CURRENT.phone}\n📍 ${CURRENT.area}\n📝 ${CURRENT.notes}\n🕒 ${leadObj.time}`;
+      await sendTelegram(lead);
+
+      say("✅ Thanks! Your request has been sent. Our dispatcher will contact you shortly.");
+      confettiBurst();
+      setTimeout(()=>{ chat.style.display='none'; }, 3500);
+      CURRENT.step = 4; break;
+  }
+});
+
+/* ================== Live feed ticker (simple) ================== */
+(function ticker(){
+  const el = document.getElementById('liveFeed');
+  const msgs = [
+    "💬 Sipho in Pretoria just booked Roofing",
+    "💬 Sarah in Randburg booked Cleaning",
+    "💬 Yusuf in Cape Town booked CCTV",
+    "💬 Thandi in Durban booked Plumbing",
+    "💬 Jason in Sandton booked Solar install"
+  ];
+  let i = 0;
+  setInterval(()=>{ el.textContent = msgs[i++%msgs.length]; }, 4500);
+})();
+
+/* ================== Confetti ================== */
+const confettiCanvas = document.getElementById('confetti'), cfx = confettiCanvas.getContext('2d');
+function size(){ confettiCanvas.width=innerWidth; confettiCanvas.height=innerHeight; }
+size(); addEventListener('resize', size);
+function confettiBurst(){
+  const cols = ['#8a5cff','#6a4cff','#23d5ab','#7ee6d5','#ffd166'];
+  const parts = Array.from({length:140},()=>({
+    x: innerWidth/2, y: innerHeight, r: 3+Math.random()*5,
+    dx: -7+Math.random()*14, dy: -12-Math.random()*9,
+    c: cols[(Math.random()*cols.length)|0], life: 120
+  }));
+  let f=0; (function draw(){
+    cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    parts.forEach(p=>{
+      cfx.beginPath(); cfx.arc(p.x,p.y,p.r,0,Math.PI*2); cfx.fillStyle=p.c; cfx.fill();
+      p.x+=p.dx; p.y+=p.dy; p.dy+=.25; p.life--;
+    });
+    f++; if(f<120) requestAnimationFrame(draw); else cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  })();
+}
+
+/* ================== Admin Panel ================== */
+const aBackdrop = document.getElementById('aBackdrop');
+const openAdminBtn = document.getElementById('openAdmin');
+const aClose = document.getElementById('aClose');
+const partnersTable = document.querySelector('#partnersTable tbody');
+const leadsTable = document.querySelector('#leadsTable tbody');
+
+openAdminBtn.onclick = ()=>{
+  const pin = prompt("Enter admin PIN:");
+  if(pin !== ADMIN_PIN) { alert("Wrong PIN"); return; }
+  aBackdrop.style.display='grid';
+  renderPartners();
+  renderLeads();
+};
+aClose.onclick = ()=> aBackdrop.style.display='none';
+
+function renderPartners(){
+  partnersTable.innerHTML = '';
+  loadPartners().forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.business}</td>
+      <td>${p.contact||''}</td>
+      <td>${p.phone||''}</td>
+      <td>${p.category}</td>
+      <td>${p.service}</td>
+      <td>${p.areas||''}</td>
+      <td class="tools">
+        <button class="btn danger" data-id="${p.id}" data-type="delP">Delete</button>
+      </td>
+    `;
+    partnersTable.appendChild(tr);
+  });
+}
+function renderLeads(){
+  leadsTable.innerHTML = '';
+  loadLeads().forEach(l=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${l.name}</td>
+      <td>${l.phone}</td>
+      <td>${l.area}</td>
+      <td>${l.category}</td>
+      <td>${l.service}</td>
+      <td>${l.notes}</td>
+      <td>${l.time}</td>
+      <td class="tools"><button class="btn danger" data-id="${l.id}" data-type="delL">Delete</button></td>
+    `;
+    leadsTable.appendChild(tr);
+  });
+}
+
+document.getElementById('exportPartners').onclick = ()=>{
+  const rows = loadPartners();
+  const header = ["business","contact","phone","email","category","service","areas","specialty","website","created"];
+  downloadCSV('partners.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
+};
+document.getElementById('exportLeads').onclick = ()=>{
+  const rows = loadLeads();
+  const header = ["name","phone","area","category","service","notes","time","id"];
+  downloadCSV('leads.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
+};
+
+document.getElementById('clearPartners').onclick = ()=>{
+  if(confirm('Delete ALL partners?')){ savePartners([]); renderPartners(); }
+};
+document.getElementById('clearLeads').onclick = ()=>{
+  if(confirm('Delete ALL leads?')){ saveLeads([]); renderLeads(); }
+};
+
+document.addEventListener('click', e=>{
+  const t = e.target;
+  if(t.matches('[data-type="delP"]')){
+    const id = t.getAttribute('data-id');
+    const list = loadPartners().filter(p=>p.id!==id);
+    savePartners(list); renderPartners();
+  }
+  if(t.matches('[data-type="delL"]')){
+    const id = t.getAttribute('data-id');
+    const list = loadLeads().filter(l=>l.id!==id);
+    saveLeads(list); renderLeads();
+  }
+});
+
+function downloadCSV(filename, rows){
+  const csv = rows.map(r => r.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 100);
+}
+
+/* expand all by default on load */
+document.querySelectorAll('.group-grid').forEach(g=>g.classList.remove('hidden'));
+</script>
+</body>
+</html>
