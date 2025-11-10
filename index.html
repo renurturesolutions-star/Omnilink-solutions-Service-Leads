@@ -56,7 +56,7 @@ a{color:inherit}
 .live{margin-top:12px;text-align:center;color:#bfc3e0}
 
 .chat-popup{
-  position:fixed;bottom:96px;right:20px;width:340px;max-height:460px;
+  position:fixed;bottom:96px;right:20px;width:340px;max-height:520px;
   background:#18152f;border:1px solid #ffffff1a;border-radius:14px;
   display:none;flex-direction:column;z-index:50;box-shadow:var(--shadow)
 }
@@ -81,6 +81,7 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 .tools{display:flex;gap:8px;margin:6px 0 2px}
 
 .footer{color:#aab0cf;text-align:center;margin:36px 0 60px}
+.small{font-size:12px;color:#cbd0ef}
 </style>
 </head>
 <body>
@@ -89,7 +90,9 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 <section class="hero">
   <div class="top-right">
     <button class="btn secondary" id="openAdmin">🔒 Admin</button>
+    <a class="btn secondary" href="contractor.html">📊 Contractor Dashboard</a>
     <button class="btn secondary" id="openContractor">🧰 Join as Contractor</button>
+    <button class="btn" id="openReview">⭐ Leave a Review</button>
   </div>
   <div class="badge">OS</div>
   <h1>OmniSolutions — All-in-One Service Network</h1>
@@ -187,7 +190,7 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
       <h3>🚨 New Partner Sign-Up</h3>
       <button class="btn" id="cClose" style="padding:6px 10px;font-size:12px">Close</button>
     </div>
-    <p style="color:#cbd0ef;margin-top:4px">Join the OmniSolutions network — we route paying jobs to you.</p>
+    <p class="small">Join the OmniSolutions network — we route paying jobs to you.</p>
     <div class="row" style="margin-top:6px">
       <input id="bizName" placeholder="Business / Contractor Name">
       <input id="ownerName" placeholder="Contact Person">
@@ -206,6 +209,7 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
     </div>
     <button class="btn" id="conSubmit" style="margin-top:8px">Submit</button>
     <div class="ok" id="conOk">✅ Submitted! You’ll appear in local matches immediately.</div>
+    <p class="small" style="margin-top:8px">Contractors: access your dashboard via the top-right “Contractor Dashboard”.</p>
   </div>
 </div>
 
@@ -213,34 +217,71 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 <div class="modal-backdrop" id="aBackdrop">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h3>🔧 Admin — Partners & Leads</h3>
+      <h3>🔧 Admin — Partners, Leads & Messages</h3>
       <button class="btn" id="aClose" style="padding:6px 10px;font-size:12px">Close</button>
     </div>
-    <div style="margin:8px 0;display:flex;gap:8px;flex-wrap:wrap">
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
       <button class="btn" id="exportPartners">Export Partners CSV</button>
       <button class="btn" id="exportLeads">Export Leads CSV</button>
       <button class="btn danger" id="clearPartners">Clear Partners</button>
       <button class="btn danger" id="clearLeads">Clear Leads</button>
+      <button class="btn" id="changeAdminPin">Change Admin PIN</button>
     </div>
 
     <h4 style="margin:14px 0 6px">Partners</h4>
-    <div style="overflow:auto;max-height:28vh">
+    <div style="overflow:auto;max-height:24vh">
       <table class="table" id="partnersTable">
         <thead>
-          <tr><th>Business</th><th>Contact</th><th>Phone</th><th>Category</th><th>Service</th><th>Areas</th><th>Actions</th></tr>
+          <tr><th>Business</th><th>Contact</th><th>Phone</th><th>Category</th><th>Service</th><th>Areas</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
 
-    <h4 style="margin:18px 0 6px">Leads</h4>
-    <div style="overflow:auto;max-height:28vh">
+    <h4 style="margin:18px 0 6px">Leads / Jobs</h4>
+    <div style="overflow:auto;max-height:24vh">
       <table class="table" id="leadsTable">
         <thead>
-          <tr><th>Name</th><th>Phone</th><th>Area</th><th>Category</th><th>Service</th><th>Notes</th><th>Time</th><th>Actions</th></tr>
+          <tr><th>ID</th><th>Name</th><th>Phone</th><th>Area</th><th>Category</th><th>Service</th><th>Notes</th><th>Assigned To</th><th>Time</th><th>Actions</th></tr>
         </thead>
         <tbody></tbody>
       </table>
+    </div>
+
+    <h4 style="margin:18px 0 6px">Direct Messages</h4>
+    <div class="row">
+      <select id="dmSelect"></select>
+      <input id="dmText" placeholder="Type a message to selected contractor">
+    </div>
+    <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="sendDM">Send DM</button>
+      <button class="btn" id="broadcastAll">Broadcast to All (unmuted)</button>
+    </div>
+    <div id="dmOk" class="ok">✅ Sent.</div>
+  </div>
+</div>
+
+<!-- Review modal -->
+<div class="modal-backdrop" id="rBackdrop">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3>⭐ Leave a Review</h3>
+      <button class="btn" id="rClose" style="padding:6px 10px;font-size:12px">Close</button>
+    </div>
+    <p class="small">Enter the Job ID we sent you (or shown at the end of chat).</p>
+    <div class="row">
+      <input id="revJobId" placeholder="Job ID (e.g., J-1731200430000)">
+      <input id="revStars" placeholder="Stars 1–5 (e.g., 5)">
+    </div>
+    <div class="row">
+      <input id="revName" placeholder="Your name">
+      <input id="revPhone" placeholder="Your phone">
+    </div>
+    <textarea id="revComment" placeholder="Tell us about the service"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="btn" id="revSubmit">Submit Review</button>
+      <div id="revOk" class="ok">✅ Thanks for your review!</div>
     </div>
   </div>
 </div>
@@ -260,17 +301,43 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 /* ================== Settings (Telegram) ================== */
 const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs";
 const TELEGRAM_CHAT_IDS = ["8187670531","8558139331"]; // you + client
-const ADMIN_PIN = "2468"; // change this if you want
-
-async function sendTelegram(text){
+async function sendTelegram(text, specificId=null){
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-  for(const chat_id of TELEGRAM_CHAT_IDS){
-    await fetch(url,{method:"POST",headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({chat_id, text, parse_mode:"Markdown"})});
+  const ids = specificId ? [specificId] : TELEGRAM_CHAT_IDS;
+  for(const chat_id of ids){
+    try{
+      await fetch(url,{method:"POST",headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id, text, parse_mode:"Markdown"})});
+    }catch(e){}
   }
 }
 
-/* ================== Data: categories & services ================== */
+/* ================== Admin PIN (not hard-coded) ==================
+   First use: prompt to set PIN -> stored in localStorage ("omni_admin_pin").
+   Access: prompt and compare. You can change it inside Admin modal. */
+function getAdminPin(){ return localStorage.getItem('omni_admin_pin') || null; }
+function setAdminPin(v){ localStorage.setItem('omni_admin_pin', v); }
+
+/* ================== Data helpers ================== */
+function load(k, f){ try{ return JSON.parse(localStorage.getItem(k) || JSON.stringify(f)); } catch{ return f; } }
+function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+function loadPartners(){ return load('omni_partners', []); }
+function savePartners(v){ save('omni_partners', v); }
+
+function loadLeads(){ return load('omni_leads', []); } // legacy list of raw leads
+function saveLeads(v){ save('omni_leads', v); }
+
+function jobs(){ return load('omni_jobs', []); }
+function saveJobs(v){ save('omni_jobs', v); }
+
+function reviews(){ return load('omni_reviews', []); }
+function saveReviews(v){ save('omni_reviews', v); }
+
+function msgsFor(phone){ return load('omni_msgs_'+phone, []); }
+function saveMsgsFor(phone, arr){ save('omni_msgs_'+phone, arr); }
+
+/* ================== Categories & Services ================== */
 const CATEGORY_MAP = {
   "Property & Maintenance":[
     "Plumbing","Electrical","Roofing","Carpentry","Painting","Handyman","HVAC","Flooring",
@@ -335,6 +402,7 @@ document.getElementById('openContractor').onclick = ()=> {
   populateCategorySelect();
 };
 document.getElementById('cClose').onclick = ()=> cBackdrop.style.display='none';
+
 function populateCategorySelect(){
   const sel = document.getElementById('bizCategory');
   sel.innerHTML = '';
@@ -347,9 +415,6 @@ function populateCategorySelect(){
     sel.appendChild(og);
   }
 }
-
-function loadPartners(){ try{ return JSON.parse(localStorage.getItem('omni_partners')||'[]'); } catch{ return []; } }
-function savePartners(list){ localStorage.setItem('omni_partners', JSON.stringify(list)); }
 
 document.getElementById('conSubmit').onclick = async ()=>{
   const name = document.getElementById('bizName').value.trim();
@@ -369,7 +434,8 @@ document.getElementById('conSubmit').onclick = async ()=>{
     id: 'p_'+Date.now(),
     business: name, contact, email, phone,
     category, service, areas, specialty, website,
-    created: new Date().toISOString()
+    created: new Date().toISOString(),
+    muted: false // admin can mute to stop dispatch
   });
   savePartners(partners);
 
@@ -386,100 +452,19 @@ document.getElementById('conSubmit').onclick = async ()=>{
   const partners = loadPartners();
   if(partners.length) return;
   const samples = [
-    {business:"RapidFlow Plumbing",contact:"Thabo",phone:"0821112222",category:"Property & Maintenance",service:"Plumbing",areas:"Cape Town; Milnerton; Table View",specialty:"Geysers"},
-    {business:"SparkRight Electrical",contact:"Nomsa",phone:"0832223333",category:"Property & Maintenance",service:"Electrical",areas:"JHB; Randburg; Sandton",specialty:"Rewiring"},
-    {business:"SkyRoof",contact:"Pieter",phone:"0843334444",category:"Property & Maintenance",service:"Roofing",areas:"Pretoria; Centurion",specialty:"Leaks"},
-    {business:"CrystalClean Pros",contact:"Aisha",phone:"0815556666",category:"Cleaning & Hygiene",service:"Deep Cleaning",areas:"Durban; Umhlanga",specialty:"Post-renovation"},
-    {business:"GuardSight CCTV",contact:"Zed",phone:"0827778888",category:"Security, Energy & Tech",service:"CCTV Installation",areas:"Cape Town; Bellville",specialty:"Retail"},
-    {business:"GreenLeaf Landscapes",contact:"Kea",phone:"0721114444",category:"Property & Maintenance",service:"Landscaping",areas:"JHB; Fourways",specialty:"Irrigation"},
-    {business:"SunGrid Solar",contact:"Mandla",phone:"0715551234",category:"Security, Energy & Tech",service:"Solar Installation",areas:"Pretoria; Midrand",specialty:"Hybrid Systems"},
-    {business:"AutoFix Panel",contact:"Riaz",phone:"0793219876",category:"Automotive & Machinery",service:"Panel Beating",areas:"Cape Town; Epping",specialty:"Insurance"},
-    {business:"TopTile Projects",contact:"Rene",phone:"0605557777",category:"Renovations & Construction",service:"Tiling",areas:"JHB; Roodepoort",specialty:"Porcelain"},
-    {business:"FreshAir HVAC",contact:"Chris",phone:"0659081122",category:"Property & Maintenance",service:"HVAC",areas:"Durban; Pinetown",specialty:"Commercial"}
+    {business:"RapidFlow Plumbing",contact:"Thabo",phone:"0821112222",category:"Property & Maintenance",service:"Plumbing",areas:"Cape Town; Milnerton; Table View",specialty:"Geysers",muted:false},
+    {business:"SparkRight Electrical",contact:"Nomsa",phone:"0832223333",category:"Property & Maintenance",service:"Electrical",areas:"JHB; Randburg; Sandton",specialty:"Rewiring",muted:false},
+    {business:"SkyRoof",contact:"Pieter",phone:"0843334444",category:"Property & Maintenance",service:"Roofing",areas:"Pretoria; Centurion",specialty:"Leaks",muted:false},
+    {business:"CrystalClean Pros",contact:"Aisha",phone:"0815556666",category:"Cleaning & Hygiene",service:"Deep Cleaning",areas:"Durban; Umhlanga",specialty:"Post-renovation",muted:false},
+    {business:"GuardSight CCTV",contact:"Zed",phone:"0827778888",category:"Security, Energy & Tech",service:"CCTV Installation",areas:"Cape Town; Bellville",specialty:"Retail",muted:false},
+    {business:"GreenLeaf Landscapes",contact:"Kea",phone:"0721114444",category:"Property & Maintenance",service:"Landscaping",areas:"JHB; Fourways",specialty:"Irrigation",muted:false},
+    {business:"SunGrid Solar",contact:"Mandla",phone:"0715551234",category:"Security, Energy & Tech",service:"Solar Installation",areas:"Pretoria; Midrand",specialty:"Hybrid Systems",muted:false},
+    {business:"AutoFix Panel",contact:"Riaz",phone:"0793219876",category:"Automotive & Machinery",service:"Panel Beating",areas:"Cape Town; Epping",specialty:"Insurance",muted:false},
+    {business:"TopTile Projects",contact:"Rene",phone:"0605557777",category:"Renovations & Construction",service:"Tiling",areas:"JHB; Roodepoort",specialty:"Porcelain",muted:false},
+    {business:"FreshAir HVAC",contact:"Chris",phone:"0659081122",category:"Property & Maintenance",service:"HVAC",areas:"Durban; Pinetown",specialty:"Commercial",muted:false}
   ];
   savePartners(samples);
 })();
-
-/* ================== Leads store (local) ================== */
-function loadLeads(){ try{ return JSON.parse(localStorage.getItem('omni_leads')||'[]'); } catch{ return []; } }
-function saveLeads(list){ localStorage.setItem('omni_leads', JSON.stringify(list)); }
-
-/* ================== Chatbot ================== */
-const chat = document.getElementById('chat');
-const chatLog = document.getElementById('chatLog');
-const chatInput = document.getElementById('chatInput');
-
-let CURRENT = {category:null, service:null, name:null, phone:null, area:null, notes:null, step:0};
-
-function say(txt, who='bot'){
-  const d = document.createElement('div');
-  d.className = 'msg '+(who==='bot'?'bot':'user');
-  d.textContent = txt;
-  chatLog.appendChild(d);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-function startChat(category, service){
-  CURRENT = {category, service, step:0};
-  chat.style.display='flex';
-  chatLog.innerHTML='';
-  say(`Hi 👋 I'm your OmniSolutions assistant. Let's sort your *${service}* request.`);
-  setTimeout(()=>say("What’s your full name?"), 600);
-}
-chatInput.addEventListener('keydown', async (e)=>{
-  if(e.key!=='Enter') return;
-  const val = chatInput.value.trim(); if(!val) return;
-  say(val,'user'); chatInput.value='';
-
-  switch(CURRENT.step){
-    case 0:
-      CURRENT.name = val;
-      say(`Nice to meet you, ${CURRENT.name}! 📞 Your phone number?`);
-      CURRENT.step = 1; break;
-    case 1:
-      CURRENT.phone = val.replace(/\D/g,'');
-      say("📍 Which area/suburb are you in?");
-      CURRENT.step = 2; break;
-    case 2:
-      CURRENT.area = val;
-      say("📝 Briefly describe the issue or what you need.");
-      CURRENT.step = 3; break;
-    case 3:
-      CURRENT.notes = val;
-
-      const partners = loadPartners().filter(p =>
-        p.category===CURRENT.category &&
-        p.service===CURRENT.service &&
-        (p.areas || '').toLowerCase().includes((CURRENT.area||'').toLowerCase())
-      ).slice(0,10);
-
-      if(partners.length){
-        say(`🔎 I found ${partners.length} local ${CURRENT.service} provider(s) in ${CURRENT.area}:`);
-        partners.forEach((p,i)=>{
-          say(`${i+1}. ${p.business} — ${p.contact} — ${p.phone}`);
-        });
-      }else{
-        say(`😅 No saved partners in ${CURRENT.area} yet for ${CURRENT.service}. We’ll still dispatch your request.`);
-      }
-
-      // Save lead locally
-      const leads = loadLeads();
-      const leadObj = {
-        id:'l_'+Date.now(), name:CURRENT.name, phone:CURRENT.phone, area:CURRENT.area,
-        category:CURRENT.category, service:CURRENT.service, notes:CURRENT.notes,
-        time:new Date().toLocaleString()
-      };
-      leads.push(leadObj); saveLeads(leads);
-
-      // Telegram
-      const lead = `🧰 *NEW LEAD*\nCategory: ${CURRENT.category}\nService: ${CURRENT.service}\n👤 ${CURRENT.name}\n📞 ${CURRENT.phone}\n📍 ${CURRENT.area}\n📝 ${CURRENT.notes}\n🕒 ${leadObj.time}`;
-      await sendTelegram(lead);
-
-      say("✅ Thanks! Your request has been sent. Our dispatcher will contact you shortly.");
-      confettiBurst();
-      setTimeout(()=>{ chat.style.display='none'; }, 3500);
-      CURRENT.step = 4; break;
-  }
-});
 
 /* ================== Live feed ticker (simple) ================== */
 (function ticker(){
@@ -508,29 +493,166 @@ function confettiBurst(){
   }));
   let f=0; (function draw(){
     cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-    parts.forEach(p=>{
-      cfx.beginPath(); cfx.arc(p.x,p.y,p.r,0,Math.PI*2); cfx.fillStyle=p.c; cfx.fill();
-      p.x+=p.dx; p.y+=p.dy; p.dy+=.25; p.life--;
-    });
+    parts.forEach(p=>{ cfx.beginPath(); cfx.arc(p.x,p.y,p.r,0,Math.PI*2); cfx.fillStyle=p.c; cfx.fill();
+      p.x+=p.dx; p.y+=p.dy; p.dy+=.25; p.life--; });
     f++; if(f<120) requestAnimationFrame(draw); else cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
   })();
 }
 
-/* ================== Admin Panel ================== */
+/* ================== Chatbot with contractor choose/skip & job creation ================== */
+const chat = document.getElementById('chat');
+const chatLog = document.getElementById('chatLog');
+const chatInput = document.getElementById('chatInput');
+
+let CURRENT = {category:null, service:null, name:null, phone:null, area:null, notes:null, step:0, options:[], chosen:null};
+
+function say(txt, who='bot'){
+  const d = document.createElement('div');
+  d.className = 'msg '+(who==='bot'?'bot':'user');
+  d.textContent = txt;
+  chatLog.appendChild(d);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function startChat(category, service){
+  CURRENT = {category, service, step:0, options:[], chosen:null};
+  chat.style.display='flex';
+  chatLog.innerHTML='';
+  say(`Hi 👋 I'm your OmniSolutions assistant. Let's sort your *${service}* request.`);
+  setTimeout(()=>say("What’s your full name?"), 600);
+}
+
+chatInput.addEventListener('keydown', async (e)=>{
+  if(e.key!=='Enter') return;
+  const val = chatInput.value.trim(); if(!val) return;
+  say(val,'user'); chatInput.value='';
+
+  switch(CURRENT.step){
+    case 0:
+      CURRENT.name = val;
+      say(`Nice to meet you, ${CURRENT.name}! 📞 Your phone number?`);
+      CURRENT.step = 1; break;
+    case 1:
+      CURRENT.phone = val.replace(/\D/g,'');
+      say("📍 Which area/suburb are you in?");
+      CURRENT.step = 2; break;
+    case 2:
+      CURRENT.area = val;
+      say("📝 Briefly describe the issue or what you need.");
+      CURRENT.step = 3; break;
+    case 3:
+      CURRENT.notes = val;
+
+      // find partners for selection (respect admin mute)
+      const partners = loadPartners().filter(p =>
+        !p.muted &&
+        p.category===CURRENT.category &&
+        p.service===CURRENT.service &&
+        (p.areas || '').toLowerCase().includes((CURRENT.area||'').toLowerCase())
+      ).slice(0,10);
+
+      if(partners.length){
+        CURRENT.options = partners;
+        say(`🔎 I found ${partners.length} local ${CURRENT.service} provider(s) in ${CURRENT.area}.`);
+        partners.forEach((p,i)=> say(`${i+1}. ${p.business} — ${p.contact} — ${p.phone}`));
+        say("Reply with the number of your preferred contractor, or type *skip* for a personal agent.");
+        CURRENT.step = 4;
+      } else {
+        say(`😅 No saved partners in ${CURRENT.area} yet for ${CURRENT.service}. We'll route this to a personal agent.`);
+        CURRENT.chosen = null; // agent route
+        CURRENT.step = 5;
+        nextFinalize();
+      }
+      break;
+    case 4: { // choose contractor or skip
+      const s = val.toLowerCase();
+      if(s==='skip'){ CURRENT.chosen = null; CURRENT.step = 5; nextFinalize(); break; }
+      const idx = parseInt(val,10);
+      if(!idx || idx<1 || idx>CURRENT.options.length){
+        say("Please enter a valid number from the list, or type *skip*.");
+      } else {
+        CURRENT.chosen = CURRENT.options[idx-1];
+        say(`✅ Selected: ${CURRENT.chosen.business}. Finalizing your request…`);
+        CURRENT.step = 5; nextFinalize();
+      }
+      break;
+    }
+    default: break;
+  }
+});
+
+async function nextFinalize(){
+  // Create a Job ID and store job (optionally assigned)
+  const id = "J-"+Date.now();
+  const job = {
+    id,
+    created: new Date().toISOString(),
+    customerName: CURRENT.name,
+    customerPhone: CURRENT.phone,
+    area: CURRENT.area,
+    category: CURRENT.category,
+    service: CURRENT.service,
+    notes: CURRENT.notes,
+    status: "Pending",
+    contractorPhone: CURRENT.chosen ? CURRENT.chosen.phone : null
+  };
+  const js = jobs(); js.push(job); saveJobs(js);
+
+  // Legacy leads list (kept for your exports)
+  const leads = loadLeads();
+  leads.push({
+    id, name:CURRENT.name, phone:CURRENT.phone, area:CURRENT.area,
+    category:CURRENT.category, service:CURRENT.service, notes:CURRENT.notes,
+    time:new Date().toLocaleString(), contractorPhone: job.contractorPhone
+  }); saveLeads(leads);
+
+  // Telegram routing
+  const base = `🧰 *NEW JOB*\nID: ${id}\nCategory: ${CURRENT.category}\nService: ${CURRENT.service}\n👤 ${CURRENT.name}\n📞 ${CURRENT.phone}\n📍 ${CURRENT.area}\n📝 ${CURRENT.notes}\n🕒 ${new Date().toLocaleString()}`;
+  await sendTelegram( CURRENT.chosen ? (base + `\n\n➡️ Assigned to: ${CURRENT.chosen.business} (${CURRENT.chosen.phone})`) : (base + `\n\n➡️ Assigned to: Personal Agent`) );
+
+  // Optional DM to contractor via Telegram (only if they provided a chat id later in their dashboard, admin can still copy)
+  if(CURRENT.chosen && CURRENT.chosen.telegramId){
+    await sendTelegram(`🧰 *New job assigned*\n${id} • ${CURRENT.service} • ${CURRENT.area}`, CURRENT.chosen.telegramId);
+  }
+
+  say(`✅ Thanks! Your request is logged.\nYour Job ID is *${id}*.\nYou can leave a review later via “⭐ Leave a Review”.`);
+  confettiBurst();
+  setTimeout(()=>{ chat.style.display='none'; }, 4000);
+}
+
+/* ================== Admin Panel (with DM & Mute) ================== */
 const aBackdrop = document.getElementById('aBackdrop');
 const openAdminBtn = document.getElementById('openAdmin');
 const aClose = document.getElementById('aClose');
 const partnersTable = document.querySelector('#partnersTable tbody');
 const leadsTable = document.querySelector('#leadsTable tbody');
+const dmSelect = document.getElementById('dmSelect');
 
 openAdminBtn.onclick = ()=>{
-  const pin = prompt("Enter admin PIN:");
-  if(pin !== ADMIN_PIN) { alert("Wrong PIN"); return; }
+  let pin = getAdminPin();
+  if(!pin){
+    const set = prompt("Set a new Admin PIN (numbers only):");
+    if(!set){ alert("PIN required."); return; }
+    setAdminPin(set);
+    alert("Admin PIN set.");
+    pin = set;
+  }
+  const enter = prompt("Enter Admin PIN:");
+  if(enter !== pin){ alert("Wrong PIN"); return; }
   aBackdrop.style.display='grid';
   renderPartners();
   renderLeads();
+  populateDMSelect();
 };
 aClose.onclick = ()=> aBackdrop.style.display='none';
+
+document.getElementById('changeAdminPin').onclick = ()=>{
+  const cur = prompt("Enter current PIN:");
+  if(cur !== getAdminPin()) { alert("Wrong PIN"); return; }
+  const np = prompt("Enter new PIN:");
+  if(!np){ alert("PIN not changed."); return; }
+  setAdminPin(np); alert("PIN updated.");
+};
 
 function renderPartners(){
   partnersTable.innerHTML = '';
@@ -543,7 +665,9 @@ function renderPartners(){
       <td>${p.category}</td>
       <td>${p.service}</td>
       <td>${p.areas||''}</td>
+      <td>${p.muted?'🔇 Muted':'🔔 Active'}</td>
       <td class="tools">
+        <button class="btn" data-id="${p.id}" data-type="mute">${p.muted?'Unmute':'Mute'}</button>
         <button class="btn danger" data-id="${p.id}" data-type="delP">Delete</button>
       </td>
     `;
@@ -552,65 +676,137 @@ function renderPartners(){
 }
 function renderLeads(){
   leadsTable.innerHTML = '';
-  loadLeads().forEach(l=>{
+  const js = jobs();
+  js.forEach(l=>{
+    const assigned = l.contractorPhone ? (loadPartners().find(p=>p.phone===l.contractorPhone)?.business||l.contractorPhone) : 'Personal Agent';
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${l.name}</td>
-      <td>${l.phone}</td>
+      <td>${l.id}</td>
+      <td>${l.customerName}</td>
+      <td>${l.customerPhone}</td>
       <td>${l.area}</td>
       <td>${l.category}</td>
       <td>${l.service}</td>
-      <td>${l.notes}</td>
-      <td>${l.time}</td>
-      <td class="tools"><button class="btn danger" data-id="${l.id}" data-type="delL">Delete</button></td>
+      <td>${l.notes||''}</td>
+      <td>${assigned}</td>
+      <td>${new Date(l.created).toLocaleString()}</td>
+      <td class="tools">
+        <button class="btn" data-id="${l.id}" data-type="dm">DM Assigned</button>
+        <button class="btn danger" data-id="${l.id}" data-type="delL">Delete</button>
+      </td>
     `;
     leadsTable.appendChild(tr);
   });
 }
-
-document.getElementById('exportPartners').onclick = ()=>{
-  const rows = loadPartners();
-  const header = ["business","contact","phone","email","category","service","areas","specialty","website","created"];
-  downloadCSV('partners.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
-};
-document.getElementById('exportLeads').onclick = ()=>{
-  const rows = loadLeads();
-  const header = ["name","phone","area","category","service","notes","time","id"];
-  downloadCSV('leads.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
-};
-
-document.getElementById('clearPartners').onclick = ()=>{
-  if(confirm('Delete ALL partners?')){ savePartners([]); renderPartners(); }
-};
-document.getElementById('clearLeads').onclick = ()=>{
-  if(confirm('Delete ALL leads?')){ saveLeads([]); renderLeads(); }
-};
+function populateDMSelect(){
+  dmSelect.innerHTML = '';
+  loadPartners().forEach(p=>{
+    const o = document.createElement('option');
+    o.value = p.phone; o.textContent = `${p.business} (${p.phone}) ${p.muted?'[Muted]':''}`;
+    dmSelect.appendChild(o);
+  });
+}
 
 document.addEventListener('click', e=>{
   const t = e.target;
   if(t.matches('[data-type="delP"]')){
     const id = t.getAttribute('data-id');
     const list = loadPartners().filter(p=>p.id!==id);
-    savePartners(list); renderPartners();
+    savePartners(list); renderPartners(); populateDMSelect();
   }
   if(t.matches('[data-type="delL"]')){
     const id = t.getAttribute('data-id');
-    const list = loadLeads().filter(l=>l.id!==id);
-    saveLeads(list); renderLeads();
+    const j = jobs().filter(x=>x.id!==id); saveJobs(j); renderLeads();
+    const l = loadLeads().filter(x=>x.id!==id); saveLeads(l);
+  }
+  if(t.matches('[data-type="mute"]')){
+    const id = t.getAttribute('data-id');
+    const list = loadPartners();
+    const p = list.find(x=>x.id===id); if(p){ p.muted = !p.muted; savePartners(list); renderPartners(); populateDMSelect(); }
+  }
+  if(t.matches('[data-type="dm"]')){
+    const id = t.getAttribute('data-id');
+    const j = jobs().find(x=>x.id===id);
+    if(!j) return;
+    const msg = prompt("Message to assigned contractor:");
+    if(!msg) return;
+    if(j.contractorPhone){
+      appendDM(j.contractorPhone, {from:'admin', text:msg, when:new Date().toISOString()});
+      document.getElementById('dmOk').style.display='block';
+      setTimeout(()=>document.getElementById('dmOk').style.display='none',1500);
+    } else {
+      alert("This job is assigned to Personal Agent (no contractor).");
+    }
   }
 });
 
+function appendDM(phone, m){
+  const arr = msgsFor(phone); arr.push(m); saveMsgsFor(phone, arr);
+  const p = loadPartners().find(x=>x.phone===phone);
+  if(p && p.telegramId){ sendTelegram(`✉️ Admin: ${m.text}`, p.telegramId); }
+}
+
+document.getElementById('sendDM').onclick = ()=>{
+  const phone = dmSelect.value;
+  const text = document.getElementById('dmText').value.trim();
+  if(!phone || !text) return;
+  appendDM(phone, {from:'admin', text, when:new Date().toISOString()});
+  document.getElementById('dmText').value='';
+  document.getElementById('dmOk').style.display='block';
+  setTimeout(()=>document.getElementById('dmOk').style.display='none',1500);
+};
+document.getElementById('broadcastAll').onclick = ()=>{
+  const text = prompt("Broadcast to all UNMUTED contractors:");
+  if(!text) return;
+  loadPartners().filter(p=>!p.muted).forEach(p=>{
+    appendDM(p.phone, {from:'admin', text, when:new Date().toISOString()});
+  });
+  alert("Broadcast sent.");
+};
+
+document.getElementById('exportPartners').onclick = ()=>{
+  const rows = loadPartners();
+  const header = ["business","contact","phone","email","category","service","areas","specialty","website","muted","created"];
+  downloadCSV('partners.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
+};
+document.getElementById('exportLeads').onclick = ()=>{
+  const rows = jobs();
+  const header = ["id","customerName","customerPhone","area","category","service","notes","contractorPhone","created","status"];
+  downloadCSV('jobs.csv', [header].concat(rows.map(r=>header.map(h=>(r[h]??'').toString().replace(/[\n\r,]/g,' ')))));
+};
+document.getElementById('clearPartners').onclick = ()=>{ if(confirm('Delete ALL partners?')){ savePartners([]); renderPartners(); populateDMSelect(); } };
+document.getElementById('clearLeads').onclick = ()=>{ if(confirm('Delete ALL jobs/leads?')){ saveJobs([]); saveLeads([]); renderLeads(); } };
+
 function downloadCSV(filename, rows){
   const csv = rows.map(r => r.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click();
   setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 100);
 }
 
 /* expand all by default on load */
 document.querySelectorAll('.group-grid').forEach(g=>g.classList.remove('hidden'));
+
+/* ================== Reviews (client-facing) ================== */
+const rBackdrop = document.getElementById('rBackdrop');
+document.getElementById('openReview').onclick = ()=> rBackdrop.style.display='grid';
+document.getElementById('rClose').onclick = ()=> rBackdrop.style.display='none';
+document.getElementById('revSubmit').onclick = ()=>{
+  const id = (document.getElementById('revJobId').value||'').trim();
+  const stars = parseInt((document.getElementById('revStars').value||'').trim(),10);
+  const name = (document.getElementById('revName').value||'').trim();
+  const phone = (document.getElementById('revPhone').value||'').trim();
+  const comment = (document.getElementById('revComment').value||'').trim();
+  if(!id || !stars || stars<1 || stars>5){ alert("Enter Job ID and stars 1–5."); return; }
+  const jlist = jobs();
+  const j = jlist.find(x=>x.id===id);
+  if(!j){ alert("Job not found."); return; }
+  const list = reviews();
+  list.push({ jobId:id, contractorPhone: j.contractorPhone || 'agent', stars, comment, customerName:name, customerPhone:phone, when:new Date().toISOString() });
+  saveReviews(list);
+  document.getElementById('revOk').style.display='block';
+  setTimeout(()=>{ rBackdrop.style.display='none'; document.getElementById('revOk').style.display='none'; }, 1600);
+};
 </script>
 </body>
 </html>
