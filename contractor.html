@@ -13,7 +13,8 @@
   --brand:#14b8a6; --brand2:#0ea5e9; --border:#e6eef3; --chip:#e6fffa; --danger:#ef4444;
   --shadow:0 10px 26px rgba(2, 8, 23, .08);
 }
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui}
+*{box-sizing:border-box} 
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1100px;margin:28px auto;padding:0 14px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
@@ -39,6 +40,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);bor
 .toast{position:fixed;right:18px;bottom:18px;min-width:260px;max-width:86vw;background:#0f172a;color:#fff;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:50}
 .toast.show{display:block;animation:pop .18s ease}
 @keyframes pop{from{transform:translateY(8px);opacity:.2}to{transform:translateY(0);opacity:1}}
+#tgVerified{display:none;color:#16a34a;font-weight:700;margin-top:6px}
+#tgVerified.active{display:inline-block}
 </style>
 </head>
 <body>
@@ -89,7 +92,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);bor
           <button class="btn" id="saveTG">Save Telegram</button>
           <button class="btn secondary" id="testTG">Test Telegram Message</button>
         </div>
-        <p class="small" style="margin-top:6px">💡 You can create a bot using @BotFather on Telegram.</p>
+        <span id="tgVerified">✅ Telegram Verified</span>
+        <p class="small" style="margin-top:6px">💡 Create a bot using @BotFather on Telegram, then paste BOT TOKEN + CHAT ID here.</p>
       </div>
     </div>
   </section>
@@ -133,7 +137,6 @@ function showDashboard(){
     tbody.appendChild(tr);
   });
 
-  // messages
   const msgs=Fload("omni_msgs_"+p.phone,[]);
   const box=$("#msgBox"); box.innerHTML=msgs.map(m=>`<div>${m.when.split("T")[0]} — <b>${m.from}:</b> ${m.text}</div>`).join("")||"No messages";
 
@@ -144,6 +147,9 @@ function showDashboard(){
     dataByMonth[m]=(dataByMonth[m]||0)+parseFloat(j.price||0)||0;
   });
   new Chart(ctx,{type:"line",data:{labels:Object.keys(dataByMonth),datasets:[{label:"Monthly Profit (R)",data:Object.values(dataByMonth)}]},options:{plugins:{legend:{display:false}}}});
+
+  // Telegram verification badge load
+  if(p.tgVerified){ $("#tgVerified").classList.add("active"); }
 }
 
 /* ===== Telegram save + test ===== */
@@ -164,6 +170,8 @@ $("#testTG").onclick=async()=>{
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({chat_id:p.tgChat,text:"✅ Test message from OmniSolutions contractor dashboard",parse_mode:"Markdown"})
     });
+    p.tgVerified=true; saveMe(p);
+    $("#tgVerified").classList.add("active");
     showToast("Test message sent!");
   }catch(e){alert("Failed to send test message. Check BOT TOKEN or CHAT ID.");}
 };
