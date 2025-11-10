@@ -348,7 +348,7 @@ if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catc
 
 /* ================== Telegram (safe no-op if unset) ================== */
 const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs"; // optional
-const TELEGRAM_CHAT_IDS = ["8187670531","8558139331"]];  // e.g., ["8187670531","8558139331"]
+const TELEGRAM_CHAT_IDS = ["8187670531","8558139331"];  // e.g., ["8187670531","8558139331"]
 async function sendTelegram(text, specificId=null){
   if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_IDS.length) return;
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -726,5 +726,6 @@ window.addEventListener('load', buildRails);
 </script>
 </body>
 </html>
+
 
 
