@@ -347,8 +347,8 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 
 /* ================== Telegram (safe no-op if unset) ================== */
-const TELEGRAM_BOT_TOKEN = ""; // optional
-const TELEGRAM_CHAT_IDS = [];  // e.g., ["12345678","87654321"]
+const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs"; // optional
+const TELEGRAM_CHAT_IDS = [];  // e.g., ["8187670531","8558139331"]
 async function sendTelegram(text, specificId=null){
   if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_IDS.length) return;
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -726,3 +726,4 @@ window.addEventListener('load', buildRails);
 </script>
 </body>
 </html>
+
