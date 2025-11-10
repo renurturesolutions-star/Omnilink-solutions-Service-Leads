@@ -388,10 +388,17 @@ function checkNewMessages(){
 }
 
 /* =============== settings actions =============== */
-$("#saveTG").onclick=()=>{
+$("#saveTG").onclick=async()=>{
   const p=me(); if(!p) return;
-  p.tgToken=$("#botToken").value.trim(); p.tgChat=$("#chatId").value.trim();
-  saveMe(p); showToast("Telegram saved ✓");
+  p.tgToken=$("#botToken").value.trim();
+  p.tgChat=$("#chatId").value.trim();
+  saveMe(p);
+  showToast("Telegram saved ✓");
+
+  // 🔔 Instant test to confirm live connection
+  if(p.tgToken && p.tgChat){
+    await sendTelegram(p.tgToken, p.tgChat, "🤖 Telegram linked successfully! You’ll now receive job leads here.");
+  }
 };
 $("#renewBtn").onclick=()=>{
   const p=me(); if(!p) return;
@@ -413,3 +420,4 @@ $("#autoRenewToggle").onclick=()=>{
 </script>
 </body>
 </html>
+
