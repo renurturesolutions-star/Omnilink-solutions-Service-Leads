@@ -3,145 +3,228 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OmniSolutions — Contractor Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+<title>OmniSolutions — Contractor Portal</title>
 <link rel="manifest" href="manifest.json" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
 <style>
-/* keep your full styling here (same as uploaded) */
-body{margin:0;font-family:Poppins,system-ui;background:#0b0a18;color:#f6f7fb;}
-/* ... your existing CSS from contractor.html remains unchanged ... */
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui;
+  background: #0b0a18;
+  color: #f6f7fb;
+  overflow-x: hidden;
+}
+.view { display:none; transition:opacity .5s ease; opacity:0; }
+.view.active { display:block; opacity:1; }
+header {
+  background: #14122b;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+.btn {
+  background: #3b36ff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn:hover { background: #2724c5; }
+.card {
+  background: #161532;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00000033;
+}
+input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #1f1d3e;
+  color: #fff;
+}
+.tabs { display:flex; gap:10px; margin:15px 0; }
+.tab { background:#1c1940; padding:10px 15px; border-radius:8px; cursor:pointer; }
+.tab.active { background:#3b36ff; }
+.small { font-size:12px; color:#ccc; }
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+@keyframes fadeIn {
+  from { opacity: 0; transform:translateY(20px);}
+  to { opacity: 1; transform:translateY(0); }
+}
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="brand">
-    <div class="badge">OS</div>
-    <div><b>OmniSolutions</b><div style="font-size:12px;color:#bfc3e0">Contractor Dashboard</div></div>
-  </div>
-  <div class="actions">
-    <a href="index.html" class="btn secondary">← Back to Site</a>
-    <button id="logoutBtn" class="btn danger" style="display:none">Log out</button>
+<header>
+  <div><b>OmniSolutions</b> Contractor Portal</div>
+  <div>
+    <a href="index.html" class="btn" style="background:#2a283f;">← Back</a>
+    <button id="logoutBtn" class="btn danger" style="display:none;background:#e53935;">Logout</button>
   </div>
 </header>
 
-<div class="mainwrap">
-  <!-- LOGIN -->
-  <main id="loginView" class="login active">
-    <div class="card" style="max-width:420px;margin:auto;">
+<main style="max-width:500px;margin:40px auto;">
+  <!-- Login -->
+  <section id="loginView" class="view active fade-in">
+    <div class="card">
       <h2>Contractor Login</h2>
-      <p class="note">Use your phone number and PIN (set on first login).</p>
       <input id="loginPhone" placeholder="Phone number" />
-      <input id="loginPin" type="password" placeholder="PIN (4–6 digits)" />
-      <button id="loginBtn" class="btn">Enter Dashboard</button>
-      <div id="loginMsg" class="bad" style="display:none"></div>
+      <input id="loginPin" type="password" placeholder="PIN" />
+      <button id="loginBtn" class="btn">Login</button>
+      <p class="small">Don't have an account? <a href="#" id="openSignup">Sign Up</a></p>
+      <div id="loginMsg" class="small" style="color:#ff7777;"></div>
     </div>
-  </main>
+  </section>
 
-  <!-- DASHBOARD -->
-  <main id="appView" class="container" style="display:none">
-    <h2 id="welcome"></h2>
-    <div class="tabs">
-      <div class="tab active" data-tab="jobs">Jobs</div>
-      <div class="tab" data-tab="reviews">Reviews</div>
-      <div class="tab" data-tab="settings">Settings</div>
+  <!-- Signup -->
+  <section id="signupView" class="view fade-in">
+    <div class="card">
+      <h2>Contractor Sign Up</h2>
+      <input id="sBusiness" placeholder="Business Name" />
+      <input id="sOwner" placeholder="Contact Person" />
+      <input id="sPhone" placeholder="Phone Number" />
+      <input id="sPass" type="password" placeholder="Create a PIN (4–6 digits)" />
+      <input id="sEmail" placeholder="Email" />
+      <input id="sCategory" placeholder="Category (e.g. Property & Maintenance)" />
+      <input id="sService" placeholder="Service (e.g. Plumbing)" />
+      <input id="sAreas" placeholder="Areas (comma separated)" />
+      <button id="signupBtn" class="btn">Create Account</button>
+      <p class="small"><a href="#" id="openLogin">Already registered? Login</a></p>
+      <div id="signupMsg" class="small" style="color:#79ff79;"></div>
     </div>
+  </section>
 
-    <section id="view-jobs" class="view active card">
-      <p>Your jobs will appear here.</p>
-    </section>
-    <section id="view-reviews" class="view card">
-      <p>Your reviews will appear here.</p>
-    </section>
-    <section id="view-settings" class="view card">
-      <div class="grid2">
-        <div><label>Business Name</label><input id="setBusiness" /></div>
-        <div><label>Contact Person</label><input id="setContact" /></div>
-        <div><label>Areas</label><input id="setAreas" /></div>
-        <div><label>Specialty</label><input id="setSpecialty" /></div>
-        <div><label>Change PIN</label><input id="setPin" /></div>
+  <!-- Dashboard -->
+  <section id="dashboardView" class="view fade-in">
+    <div class="card">
+      <h2 id="welcome"></h2>
+      <div class="tabs">
+        <div class="tab active" data-tab="jobs">Jobs</div>
+        <div class="tab" data-tab="reviews">Reviews</div>
+        <div class="tab" data-tab="settings">Settings</div>
       </div>
-      <button id="saveSettings" class="btn" style="margin-top:10px;">Save</button>
-    </section>
-  </main>
-</div>
+      <div id="tabContent">
+        <div id="tab-jobs" class="tabPage active">
+          <p>Your assigned jobs will appear here.</p>
+        </div>
+        <div id="tab-reviews" class="tabPage" style="display:none;">
+          <p>Client reviews will appear here.</p>
+        </div>
+        <div id="tab-settings" class="tabPage" style="display:none;">
+          <label>Update Info:</label>
+          <input id="setBusiness" placeholder="Business Name" />
+          <input id="setAreas" placeholder="Areas" />
+          <button id="saveSettings" class="btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-<footer>© 2025 OmniSolutions — Contractor Dashboard</footer>
+<footer style="text-align:center;color:#666;padding:10px;font-size:12px;">
+  © 2025 OmniSolutions
+</footer>
 
 <script>
-// ========== Helpers ==========
-const ls = {
-  get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},
-  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
-};
+/* ========= LocalStorage helpers ========= */
+const ls={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const key='omni_partners';
 
-// ========== Switch views ==========
-function showLogin(){loginView.style.display='block';appView.style.display='none';logoutBtn.style.display='none';}
-function showApp(){loginView.style.display='none';appView.style.display='block';logoutBtn.style.display='block';}
+/* ========= Switch view utility ========= */
+function show(id){
+  document.querySelectorAll('.view').forEach(v=>{v.classList.remove('active');v.style.display='none';});
+  const el=document.getElementById(id);
+  el.style.display='block';
+  setTimeout(()=>el.classList.add('active'),10);
+}
 
-// ========== Login ==========
+/* ========= Signup ========= */
+signupBtn.onclick=()=>{
+  const name=sBusiness.value.trim(),
+        owner=sOwner.value.trim(),
+        phone=sPhone.value.trim(),
+        pass=sPass.value.trim();
+  if(!name||!owner||!phone||!pass){signupMsg.textContent='Please fill all required fields.';return;}
+  const partners=ls.get(key,[]);
+  if(partners.find(p=>p.phone===phone)){signupMsg.textContent='Phone already registered.';return;}
+  partners.push({
+    id:'p_'+Date.now(),
+    business:name,owner,phone,pass,
+    email:sEmail.value.trim(),
+    category:sCategory.value.trim(),
+    service:sService.value.trim(),
+    areas:sAreas.value.trim(),
+    created:new Date().toISOString(),
+    active:true,subStatus:'Active',badges:[]
+  });
+  ls.set(key,partners);
+  signupMsg.textContent='✅ Account created! You can now log in.';
+  setTimeout(()=>show('loginView'),1500);
+};
+
+/* ========= Login ========= */
 loginBtn.onclick=()=>{
   const phone=loginPhone.value.trim();
   const pin=loginPin.value.trim();
   const partners=ls.get(key,[]);
-  let me=partners.find(p=>(p.phone||'').replace(/\D/g,'')===phone.replace(/\D/g,''));
-  if(!me){
-    loginMsg.textContent='Not found. Ask admin to add your number.';loginMsg.style.display='block';return;
-  }
-  if(!me.pin){
-    if(pin.length<4){loginMsg.textContent='Set a new 4–6 digit PIN.';loginMsg.style.display='block';return;}
-    me.pin=pin;me.subStart=Date.now();me.subExpiry=Date.now()+30*86400000;
-    ls.set(key,partners);
-  } else if(me.pin!==pin){
-    loginMsg.textContent='Wrong PIN.';loginMsg.style.display='block';return;
-  }
-  localStorage.setItem('contractor_phone',me.phone);
+  const me=partners.find(p=>p.phone===phone && p.pass===pin);
+  if(!me){loginMsg.textContent='Invalid phone or PIN.';return;}
+  localStorage.setItem('contractor_phone',phone);
   openDashboard(me);
 };
 
-// ========== Dashboard ==========
+/* ========= Dashboard ========= */
 function openDashboard(me){
-  showApp();
-  document.getElementById('welcome').textContent=`Welcome, ${me.business||me.contact||'Contractor'}`;
-  document.querySelectorAll('.tab').forEach(tab=>{
-    tab.onclick=()=>{
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('view-'+tab.dataset.tab).classList.add('active');
+  show('dashboardView');
+  welcome.textContent=`Welcome, ${me.business||'Contractor'}`;
+  logoutBtn.style.display='inline-block';
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(a=>a.classList.remove('active'));
+      document.querySelectorAll('.tabPage').forEach(pg=>pg.style.display='none');
+      t.classList.add('active');
+      document.getElementById('tab-'+t.dataset.tab).style.display='block';
     };
   });
 }
 
-// ========== Save Settings ==========
+/* ========= Save Settings ========= */
 saveSettings.onclick=()=>{
   const phone=localStorage.getItem('contractor_phone');
   const partners=ls.get(key,[]);
   const me=partners.find(p=>p.phone===phone);
   if(!me)return;
-  me.business=setBusiness.value;
-  me.contact=setContact.value;
-  me.areas=setAreas.value;
-  me.specialty=setSpecialty.value;
-  if(setPin.value.trim()) me.pin=setPin.value.trim();
+  me.business=setBusiness.value.trim()||me.business;
+  me.areas=setAreas.value.trim()||me.areas;
   ls.set(key,partners);
-  alert('Settings saved!');
+  alert('Settings updated!');
 };
 
-// ========== Logout ==========
-logoutBtn.onclick=()=>{localStorage.removeItem('contractor_phone');showLogin();};
+/* ========= Logout ========= */
+logoutBtn.onclick=()=>{localStorage.removeItem('contractor_phone');logoutBtn.style.display='none';show('loginView');};
 
-// ========== Auto login ==========
-const curPhone=localStorage.getItem('contractor_phone');
-if(curPhone){
+/* ========= Auto-login ========= */
+const current=localStorage.getItem('contractor_phone');
+if(current){
   const partners=ls.get(key,[]);
-  const me=partners.find(p=>p.phone===curPhone);
+  const me=partners.find(p=>p.phone===current);
   if(me)openDashboard(me);
 }
+
+/* ========= Navigation ========= */
+openSignup.onclick=()=>show('signupView');
+openLogin.onclick=()=>show('loginView');
 </script>
 
-<!-- keep addons last -->
+<!-- Addons must load last -->
 <script src="addons.js"></script>
 <script src="subscription_addon.js"></script>
 </body>
