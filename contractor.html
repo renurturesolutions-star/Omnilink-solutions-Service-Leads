@@ -74,6 +74,10 @@ label{font-size:12px;color:#cfd3f5;margin-bottom:4px;display:block;}
 .note{color:#c8ccee;font-size:12px;margin-top:6px;}
 .bad{color:#ff98ac;font-size:13px;}
 .good{color:#87f0d9;font-size:13px;}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:900px){.kpi{grid-template-columns:repeat(2,1fr)}}
+.kpi .stat small{display:block;color:#cbd0ef}
+.log{max-height:160px;overflow:auto;font-size:12px;color:#cbd0ef}
 </style>
 </head>
 <body>
@@ -117,22 +121,28 @@ label{font-size:12px;color:#cfd3f5;margin-bottom:4px;display:block;}
 <main id="appView" class="container" style="display:none">
   <div class="grid2">
     <div class="card">
-      <div class="grid2">
+      <div class="kpi">
         <div class="stat"><small>Total Jobs</small><b id="statJobs">0</b></div>
         <div class="stat"><small>Avg Rating</small><b id="statRating">—</b></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="grid2">
         <div class="stat"><small>Pending</small><b id="statPending">0</b></div>
         <div class="stat"><small>Completed</small><b id="statDone">0</b></div>
       </div>
+    </div>
+    <div class="card">
+      <div class="kpi">
+        <div class="stat"><small>7-Day Jobs</small><b id="stat7d">0</b></div>
+        <div class="stat"><small>Response Time (est)</small><b id="statResp">—</b></div>
+        <div class="stat"><small>5★ %</small><b id="stat5">—</b></div>
+        <div class="stat"><small>Muted?</small><b id="statMuted">—</b></div>
+      </div>
+      <div class="log" id="statLog"></div>
     </div>
   </div>
 
   <div class="tabs">
     <div class="tab active" data-tab="jobs">Jobs</div>
     <div class="tab" data-tab="reviews">Reviews</div>
+    <div class="tab" data-tab="messages">Messages</div>
     <div class="tab" data-tab="settings">Settings</div>
   </div>
 
@@ -172,6 +182,20 @@ label{font-size:12px;color:#cfd3f5;margin-bottom:4px;display:block;}
     </div>
   </section>
 
+  <!-- MESSAGES TAB -->
+  <section id="view-messages" class="view card">
+    <div class="controls">
+      <div class="inline" style="flex:1">
+        <label>Chat with Admin</label>
+        <div id="dmThread" style="background:#201c3c;border:1px solid #ffffff15;border-radius:10px;padding:10px;max-height:260px;overflow:auto"></div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:8px">
+      <input id="dmInput" placeholder="Type a message to Admin…"/>
+      <button id="dmSend" class="btn">Send</button>
+    </div>
+  </section>
+
   <!-- SETTINGS TAB -->
   <section id="view-settings" class="view card">
     <div class="grid2">
@@ -203,21 +227,25 @@ function jobs(){ return load('omni_jobs', []); }
 function saveJobs(v){ save('omni_jobs', v); }
 function reviews(){ return load('omni_reviews', []); }
 function saveReviews(v){ save('omni_reviews', v); }
+function msgsFor(phone){ return load('omni_msgs_'+phone, []); }
+function saveMsgsFor(phone, arr){ save('omni_msgs_'+phone, arr); }
 
-/* ========= TELEGRAM ALERTS (central channel + optional per-contractor) ========= */
+/* ========= TELEGRAM ALERTS ========= */
 const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs";
-const ADMIN_CHAT_IDS = ["8187670531","8558139331"]; // your two channels
+const ADMIN_CHAT_IDS = ["8187670531","8558139331"];
 async function sendTelegram(text, specificId=null){
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   const ids = specificId ? [specificId] : ADMIN_CHAT_IDS;
   for(const chat_id of ids){
-    await fetch(url, { method:"POST", headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chat_id, text, parse_mode:"Markdown" })
-    });
+    try{
+      await fetch(url, { method:"POST", headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ chat_id, text, parse_mode:"Markdown" })
+      });
+    }catch(e){}
   }
 }
 
-/* ========= AUTH: phone + PIN (created on first login) ========= */
+/* ========= AUTH ========= */
 let ME = null;
 const loginView = document.getElementById('loginView');
 const appView = document.getElementById('appView');
@@ -268,6 +296,7 @@ function renderAll(){
   renderStats();
   renderJobs();
   renderReviews();
+  renderDM();
 }
 function renderStats(){
   const myJobs = jobs().filter(j => j.contractorPhone === ME.phone);
@@ -277,6 +306,19 @@ function renderStats(){
   const myReviews = reviews().filter(r => r.contractorPhone === ME.phone);
   const avg = myReviews.length ? (myReviews.reduce((a,b)=>a+b.stars,0)/myReviews.length).toFixed(1) : '—';
   document.getElementById('statRating').textContent = avg;
+
+  // extra analytics
+  const sevenDaysAgo = Date.now()-7*24*3600*1000;
+  const jobs7 = myJobs.filter(j=> new Date(j.created).getTime() >= sevenDaysAgo).length;
+  document.getElementById('stat7d').textContent = jobs7;
+  const fivePct = myReviews.length ? Math.round(100*myReviews.filter(r=>r.stars===5).length/myReviews.length)+'%' : '—';
+  document.getElementById('stat5').textContent = fivePct;
+  const me = partners().find(p=>p.phone===ME.phone);
+  document.getElementById('statMuted').textContent = me && me.muted ? '🔇 Muted' : '🔔 Active';
+
+  const log = document.getElementById('statLog');
+  log.innerHTML = myJobs.slice().sort((a,b)=> new Date(b.created)-new Date(a.created)).slice(0,6)
+    .map(j=>`${new Date(j.created).toLocaleString()} — ${j.service} • ${j.area} • ${j.status}`).join('\n');
 }
 
 function renderJobs(){
@@ -304,7 +346,6 @@ function renderJobs(){
       </td>
       <td class="center">
         <button class="btn secondary" data-id="${j.id}" data-act="details">Details</button>
-        <button class="btn" data-id="${j.id}" data-act="review">Add Review</button>
       </td>`;
     jobsBody.appendChild(tr);
   });
@@ -334,24 +375,6 @@ document.addEventListener('click', (e)=>{
       `Customer: ${j.customerName}\nPhone: ${j.customerPhone}\nArea: ${j.area}\nService: ${j.service}\n\n`+
       `Notes:\n${j.notes||'-'}`
     );
-  }
-  if(t.dataset.act==='review'){
-    const j = jobs().find(x=>x.id===t.dataset.id);
-    if(!j) return;
-    const stars = parseInt(prompt("Customer rating (1-5):","5")||"0",10);
-    if(!stars || stars<1 || stars>5) return;
-    const comment = prompt("Customer comment (optional):","Great workmanship!");
-    const list = reviews();
-    list.push({
-      jobId: j.id,
-      contractorPhone: ME.phone,
-      stars,
-      comment: (comment||'').trim(),
-      when: new Date().toISOString()
-    });
-    saveReviews(list);
-    renderReviews();
-    renderStats();
   }
 });
 
@@ -400,7 +423,35 @@ document.getElementById('saveSettings').onclick = ()=>{
     ME = me;
     document.getElementById('saveMsg').style.display='block';
     setTimeout(()=>document.getElementById('saveMsg').style.display='none', 1500);
+    renderStats();
   }
+};
+
+/* ========= DMs with Admin ========= */
+const dmThread = document.getElementById('dmThread');
+const dmInput = document.getElementById('dmInput');
+const dmSend = document.getElementById('dmSend');
+
+function renderDM(){
+  const list = msgsFor(ME.phone);
+  dmThread.innerHTML = '';
+  list.forEach(m=>{
+    const div = document.createElement('div');
+    div.className = 'msg '+(m.from==='admin'?'bot':'user');
+    div.textContent = `${m.from==='admin'?'Admin':'Me'}: ${m.text}`;
+    dmThread.appendChild(div);
+  });
+  dmThread.scrollTop = dmThread.scrollHeight;
+}
+dmSend.onclick = async ()=>{
+  const text = (dmInput.value||'').trim();
+  if(!text) return;
+  const list = msgsFor(ME.phone);
+  list.push({from:'me', text, when:new Date().toISOString()});
+  saveMsgsFor(ME.phone, list);
+  dmInput.value='';
+  renderDM();
+  await sendTelegram(`✉️ ${ME.business}: ${text}`); // to your central channel
 };
 </script>
 </body>
