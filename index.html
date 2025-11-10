@@ -311,8 +311,8 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 
 <script>
 /* ================== Settings (Telegram) ================== */
-const TELEGRAM_BOT_TOKEN = "REPLACE_WITH_YOUR_BOT_TOKEN"; // keep or remove
-const TELEGRAM_CHAT_IDS = []; // keep or remove
+const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs"; // keep or remove
+const TELEGRAM_CHAT_IDS = [8187670531][8558139331]; // keep or remove
 async function sendTelegram(text, specificId=null){
   if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_IDS.length) return;
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -472,4 +472,5 @@ document.getElementById("aClose").onclick=()=>document.getElementById("aBackdrop
 </script>
 </body>
 </html>
+
 
