@@ -1,140 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OmniSolutions — Contractor Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-<style>
-body{margin:0;font-family:Poppins,system-ui;background:#0b0a18;color:#fff;}
-.container{max-width:900px;margin:auto;padding:20px;}
-.card{background:#161532;padding:20px;border-radius:12px;box-shadow:0 0 10px #0003;margin:10px 0;}
-.btn{background:#3b36ff;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;}
-.tab{display:inline-block;padding:8px 14px;background:#1f1c40;margin:4px;border-radius:8px;cursor:pointer;}
-.tab.active{background:#3b36ff;}
-.small{font-size:12px;color:#cbd0ef}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OmniSolutions Contractor Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#0b0a18;--panel:#18152f;--text:#f6f7fb;--muted:#c6c9de;
+      --brand:#8a5cff;--brand2:#6a4cff;--danger:#ff5c7a;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:Poppins,system-ui;background:var(--bg);color:var(--text);}
+    .card{background:var(--panel);border:1px solid #ffffff15;border-radius:14px;padding:16px;box-shadow:0 10px 26px #0004;}
+    .btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700;}
+    .btn:hover{opacity:.9;}
+    input,select{width:100%;padding:10px;border:none;border-radius:10px;background:#1e1b3b;color:#fff;}
+    .hidden{display:none;}
+    .login,.dashboard{max-width:420px;margin:50px auto;text-align:center;}
+    .fadeIn{animation:fadeSlide .5s ease forwards;}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  </style>
 </head>
 <body>
-<header style="background:#14122b;padding:10px;text-align:center;position:sticky;top:0;z-index:5;">
-  <h2>Contractor Dashboard</h2>
-  <button id="logoutBtn" class="btn" style="position:absolute;right:12px;top:8px;">Logout</button>
-</header>
 
-<main id="loginView" class="container">
-  <div class="card">
-    <h3>Login</h3>
-    <input id="phone" placeholder="Phone Number">
-    <input id="pin" type="password" placeholder="PIN (4–6 digits)">
-    <button id="loginBtn" class="btn">Login</button>
-    <div id="loginMsg" style="color:#ff7777;margin-top:10px;"></div>
-    <p class="small" style="margin-top:8px">Tip: Phone & PIN are what you used at signup on the main site.</p>
-  </div>
-</main>
+<section id="loginView" class="login card">
+  <h2>🧰 Contractor Access</h2>
+  <input id="phone" placeholder="Phone number (e.g. 0821112222)" />
+  <input id="pass" type="password" placeholder="Password" />
+  <button class="btn" id="loginBtn">Login</button>
+  <p style="margin-top:8px;color:var(--muted)">or</p>
+  <button class="btn" id="newBtn" style="background:#2c2852">New Contractor? Sign Up</button>
+  <p id="forgot" style="color:#8a5cff;cursor:pointer;margin-top:10px">Forgot Password?</p>
+</section>
 
-<main id="dashboard" class="container" style="display:none;">
-  <h3 id="welcome"></h3>
-  <div class="small" id="subStatusText"></div>
-  <div style="margin:8px 0;">
-    <span class="tab active" data-tab="jobs">Jobs</span>
-    <span class="tab" data-tab="reviews">Reviews</span>
-    <span class="tab" data-tab="settings">Settings</span>
-    <span class="tab" data-tab="training">Training</span>
-  </div>
-  <section id="tab-jobs" class="card">No jobs yet.</section>
-  <section id="tab-reviews" class="card" style="display:none;">No reviews yet.</section>
-  <section id="tab-settings" class="card" style="display:none;">
-    <div class="small" style="margin-bottom:6px">Profile</div>
-    <input id="businessName" placeholder="Business Name">
-    <input id="areas" placeholder="Areas">
-    <button id="saveSettings" class="btn">Save</button>
-    <div id="revBox" style="margin-top:10px"></div>
-    <div id="supportBox" style="margin-top:10px"></div>
-  </section>
-  <section id="tab-training" class="card" style="display:none;">
-    <div class="small">Training & Certification</div>
-    <button class="btn" id="train1" style="margin:6px 6px 0 0">Complete: Safety Basics</button>
-    <button class="btn" id="train2" style="margin:6px 6px 0 0">Complete: Customer Care</button>
-    <button class="btn" id="train3" style="margin:6px 6px 0 0">Complete: Quality Control</button>
-    <div id="trainStatus" class="small" style="margin-top:10px"></div>
-  </section>
-</main>
+<section id="signupView" class="login card hidden">
+  <h2>🧰 New Contractor Signup</h2>
+  <input id="biz" placeholder="Business Name">
+  <input id="name" placeholder="Contact Person">
+  <input id="email" placeholder="Email">
+  <input id="phone2" placeholder="Phone Number">
+  <input id="category" placeholder="Category (e.g. Plumbing)">
+  <input id="area" placeholder="Areas (e.g. Cape Town, Durban)">
+  <input id="pass2" type="password" placeholder="Create Password">
+  <button class="btn" id="signupBtn">Create Account</button>
+</section>
+
+<section id="dashboard" class="dashboard card hidden">
+  <h2>📊 Contractor Dashboard</h2>
+  <p id="welcome"></p>
+  <button class="btn" id="viewPass">🔐 View My Login Details</button>
+  <div id="passInfo" class="hidden" style="margin-top:10px"></div>
+
+  <h3 style="margin-top:20px;">💸 Subscription Plans</h3>
+  <div id="subsList"></div>
+  <button class="btn" id="renewBtn" style="margin-top:10px">Renew / Upgrade</button>
+</section>
 
 <script>
-const ls={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+async function sha256(str){
+  const buf=new TextEncoder().encode(str);
+  const hash=await crypto.subtle.digest("SHA-256",buf);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function load(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 const key="omni_partners";
 
-function openDashboard(me){
-  loginView.style.display="none";
-  dashboard.style.display="block";
-  welcome.textContent="Welcome "+(me.business||me.contact||'Contractor');
-  renderSubStatus(me);
-}
+/* Login & Signup logic */
+const loginView=document.getElementById("loginView");
+const signupView=document.getElementById("signupView");
+const dash=document.getElementById("dashboard");
 
-function renderSubStatus(me){
-  if(!me) return;
-  const left = me.subExpiry? Math.max(0, Math.ceil((me.subExpiry - Date.now())/86400000)) : 0;
-  subStatusText.textContent = me.subExpiry && me.subExpiry>Date.now() ? `Subscription active • ${left} day(s) left` : `Subscription expired`;
-}
-
-loginBtn.onclick=()=>{
-  const phoneVal=phone.value.trim(), pinVal=document.getElementById("pin").value.trim();
-  const list=ls.get(key,[]);
-  const me=list.find(p=>p.phone===phoneVal&&(p.pass===pinVal||p.pin===pinVal));
-  if(!me){loginMsg.textContent="Invalid details.";return;}
-  localStorage.setItem("contractor_phone",phoneVal);
-  openDashboard(me);
+document.getElementById("newBtn").onclick=()=>{loginView.classList.add("hidden");signupView.classList.remove("hidden");};
+document.getElementById("loginBtn").onclick=async()=>{
+  const phone=phone.value.trim();
+  const pass=await sha256(pass.value.trim());
+  const list=load(key,[]);
+  const user=list.find(u=>u.phone===phone && u.pass===pass);
+  if(user){localStorage.setItem("contractor_phone",phone);showDash(user);}
+  else alert("❌ Invalid login.");
+};
+document.getElementById("signupBtn").onclick=async()=>{
+  const biz=biz.value.trim(), name=name.value.trim(), email=email.value.trim(), phone=phone2.value.trim(), cat=category.value.trim(), area=area.value.trim(), pass=await sha256(pass2.value.trim());
+  if(!biz||!phone||!pass){alert("Fill all fields.");return;}
+  const list=load(key,[]);
+  if(list.find(x=>x.phone===phone)){alert("Account exists, please login.");return;}
+  const now=Date.now(),month=30*86400000;
+  const subStart=now,subExpiry=now+month;
+  const user={business:biz,contact:name,email,phone,category:cat,areas:area,pass,subStart,subExpiry,subPlan:"monthly_basic"};
+  list.push(user);save(key,list);
+  localStorage.setItem("contractor_phone",phone);
+  showDash(user);
+};
+document.getElementById("forgot").onclick=()=>{
+  const phone=prompt("Enter your phone number:");
+  const list=load(key,[]);
+  const u=list.find(x=>x.phone===phone);
+  if(!u)return alert("No user found.");
+  alert("Your password hint: starts with "+(u.phone||"").slice(0,3)+" and has "+u.pass.length+" characters (encrypted)");
 };
 
-logoutBtn.onclick=()=>{localStorage.removeItem("contractor_phone");dashboard.style.display="none";loginView.style.display="block";};
-
-saveSettings.onclick=()=>{
-  const phoneVal=localStorage.getItem("contractor_phone");
-  const list=ls.get(key,[]);
-  const me=list.find(p=>p.phone===phoneVal);
-  if(!me)return;
-  me.business=document.getElementById("businessName").value||me.business;
-  me.areas=document.getElementById("areas").value||me.areas;
-  ls.set(key,list);
-  renderSubStatus(me);
-  alert("Saved!");
-};
-
-document.querySelectorAll(".tab").forEach(t=>{
-  t.onclick=()=>{
-    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-    document.querySelectorAll("section[id^='tab-']").forEach(x=>x.style.display="none");
-    t.classList.add("active");
-    document.getElementById("tab-"+t.dataset.tab).style.display="block";
-  };
-});
-
-const cur=localStorage.getItem("contractor_phone");
-if(cur){const me=ls.get(key,[]).find(p=>p.phone===cur);if(me)openDashboard(me);}
-
-/* simple training buttons (badges) */
-function trainingComplete(which){
-  const phoneVal=localStorage.getItem("contractor_phone");
-  const list=ls.get(key,[]);
-  const me=list.find(p=>p.phone===phoneVal);
-  if(!me) return;
-  me.training = me.training || {};
-  me.training[which] = true;
-  const done = Object.values(me.training).filter(Boolean).length;
-  if(done>=3){
-    me.badges = me.badges||[];
-    if(!me.badges.includes('Certified')) me.badges.push('Certified');
-  }
-  ls.set(key,list);
-  document.getElementById('trainStatus').textContent = `Completed: ${done}/3`;
-  alert('Module completed!');
+function showDash(user){
+  signupView.classList.add("hidden");
+  loginView.classList.add("hidden");
+  dash.classList.remove("hidden");
+  dash.classList.add("fadeIn");
+  document.getElementById("welcome").textContent=`Welcome ${user.business}!`;
+  renderSubs(user);
 }
-train1.onclick=()=>trainingComplete('safety');
-train2.onclick=()=>trainingComplete('customer');
-train3.onclick=()=>trainingComplete('quality');
+function renderSubs(u){
+  const div=document.getElementById("subsList");
+  div.innerHTML=`
+    <div class="card" style="background:#1e1a3b;margin:5px 0;">First Month: <b>R100</b></div>
+    <div class="card" style="background:#1e1a3b;margin:5px 0;">Following Months: <b>R299/month</b></div>
+    <div class="card" style="background:#1e1a3b;margin:5px 0;">6 Months: <b>R1499</b></div>
+    <div class="card" style="background:#1e1a3b;margin:5px 0;">Yearly: <b>R2999</b></div>
+  `;
+}
+document.getElementById("viewPass").onclick=()=>{
+  const phone=localStorage.getItem("contractor_phone");
+  const list=load(key,[]);
+  const u=list.find(x=>x.phone===phone);
+  const div=document.getElementById("passInfo");
+  div.classList.toggle("hidden");
+  div.innerHTML=`Business: ${u.business}<br>Phone: ${u.phone}<br>Password (encrypted): ${u.pass.slice(0,12)}…`;
+};
+document.getElementById("renewBtn").onclick=()=>{
+  alert("Contact admin to renew. Subscription plans are recorded locally.");
+};
 </script>
-
-<!-- Single merged master script -->
-<script src="addons_master.js"></script>
 </body>
 </html>
