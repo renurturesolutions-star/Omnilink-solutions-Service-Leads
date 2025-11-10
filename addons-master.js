@@ -1,294 +1,219 @@
 /* =========================================================
-   OMNISOLUTIONS — ADDONS MASTER (v5 Final Business Edition)
-   Includes:
-   ✅ Subscriptions (R100 → R299, 6mo, yearly)
-   ✅ 5-Day Grace Period Warning
-   ✅ Full-Screen Admin Dashboard with Detailed Analytics
-   ✅ Revenue Tracking + Stats
-   ✅ Admin PDF Export & Referral Leaderboard
-   ✅ AI Service Tag Generator
-   ✅ Smart Area Detector
-   ✅ Chatbot Improvements + Animated Bubbles
-   ✅ Fixed plumber search logic
+   OMNISOLUTIONS — ADDONS MASTER (v2.2)
+   - Massive categories
+   - Scrollable service rails (index side – keep your HTML)
+   - Chatbot: stays open; human tone
+   - Plumber rule: show all plumbers regardless of area
+   - Contractor sign-up: password + plan (monthly R100→R299pm, 6mo, yearly)
+   - Admin: CSV export, backup/restore, PIN, full controls
+   - Subscriptions: 3-day reminder + 5-day grace → Expire
+   - NEW:
+     * Admin Suspend/Unsuspend contractor (hard lock dashboard)
+     * Per-contractor Telegram (token + chatId). Job alerts go to THEIR bot.
+     * Admin DM also forwards to contractor’s Telegram (if set)
    ========================================================= */
 (function(){
-  const ls={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-  const keys={partners:"omni_partners",jobs:"omni_jobs",reviews:"omni_reviews",clients:"omni_clients",subs:"omni_subscriptions",rev:"omni_revenue"};
   const $=(s,r=document)=>r.querySelector(s);
   const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-  const HAS={
-    index:!!document.querySelector("#catalog")||!!document.querySelector(".hero"),
-    contractorShell:!!document.querySelector("#dashboard")||!!document.querySelector("#tab-settings"),
-    adminModal:!!document.querySelector("#aBackdrop")
+  const F={load:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}},save:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+
+  /* ================== Category DB for index bubble rails ================== */
+  const CATEGORY_MAP = {
+    "Property & Maintenance":["Plumbing","Electrical","Roofing","Carpentry","Painting","Handyman","HVAC","Flooring","Masonry","Gutter Cleaning","Pest Control","Landscaping","Pool Maintenance","Appliance Repair","Waterproofing","Irrigation","Window Repair","Glass/Glazing","Ceilings & Drywall","Tiling","Gate Motors","Welding","Geysers","Leak Detection"],
+    "Cleaning & Hygiene":["Home Cleaning","Office Cleaning","Deep Cleaning","Move-in/Move-out","Carpet Cleaning","Window Cleaning","Janitorial Services","Sanitizing","Laundry Collection","Upholstery Cleaning","Post-Construction Cleaning","High-Pressure Wash","Maid Service"],
+    "Renovations & Construction":["General Building","Kitchen Renovations","Bathroom Renovations","Home Extensions","Concrete Work","Steelwork & Welding","Joinery","Scaffolding","Paving","Drywall & Ceilings","Waterproofing","Project Management","Quantity Surveying","Site Cleanup"],
+    "Property Sales & Rentals":["Real Estate Agent","Property Management","Valuations","Apartment Rentals","Commercial Sales","Short-Term Letting","Estate Photography","Home Staging","Bond Origination","Auction Services"],
+    "Business & Professional":["Accounting","Legal Advice","Bookkeeping","IT Support","Web Design","Digital Marketing","Branding/Printing","Admin Assistance","Courier Services","Recruitment","Company Registrations","Virtual Assistant","Copywriting","Translations"],
+    "Security, Energy & Tech":["CCTV Installation","Alarm Systems","Access Control","Electric Fencing","Gate Motors","Networking & Wi-Fi","Smart Home Setup","Solar Installation","Inverters & Batteries","Generator Install/Maintenance","Intercoms","Data Cabling"],
+    "Automotive & Machinery":["Vehicle Service/Repair","Tyre Fitment","Panel Beating","Auto Electrician","Towing","Truck Maintenance","Diesel Mechanics","Air Compressors","Forklifts/Plant","Auto Detailing"],
+    "Personal & Lifestyle":["Personal Trainer","Tutors","Event Planning","Catering","Beauty Services","Barber/Hair","Pet Grooming","Childcare","Elder Care","Photography/Videography","DJ/Entertainment","Driving Lessons"],
+    "Environmental & Utilities":["Boreholes/Water","Water Treatment","Waste Disposal","Recycling","Tree Felling","Energy Audits","Garden Services","Fire Safety/Extinguishers","Environmental Compliance","Gas Installers"],
+    "Medical, Logistics, Education & IT":["Ambulance (Private)","Nursing & Home Care","Physio & Rehab","Medical Equipment Rental","Pharmacy Delivery","Courier/Logistics","Warehousing","Moving Services","Packing & Crating","Tutoring (All grades)","Tertiary Applications Help","Coding Bootcamps","IT Consulting","Cybersecurity","Cloud & DevOps"]
+  };
+  window.__OMNI_CATEGORIES__ = CATEGORY_MAP;
+
+  /* ================== Search hook: plumbers show everywhere ================== */
+  window.__omni_prepare_partner_options__ = function(list, service, area){
+    const isPlumb = (service||'').toLowerCase().includes('plumb');
+    if(isPlumb){
+      return list.filter(p=>!p.muted && p.service===service)
+                 .sort((a,b)=>a.business.localeCompare(b.business));
+    }
+    return list.filter(p=>!p.muted && (p.areas||'').toLowerCase().includes((area||'').toLowerCase()))
+               .sort((a,b)=>a.business.localeCompare(b.business));
   };
 
-  /* =========================================================
-     SMART AREA DETECTOR
-  ========================================================= */
-  const AREAS=["Cape Town","Durban","Johannesburg","Pretoria","Centurion","Sandton","Randburg","Umhlanga","Milnerton","Table View","Roodepoort"];
-  function suggestArea(val){
-    if(!val)return[];
-    val=val.toLowerCase();
-    return AREAS.filter(a=>a.toLowerCase().includes(val)).slice(0,3);
-  }
+  /* ================== Sign-up helpers (index page) ================== */
+  const DEFAULT_PLANS = [
+    {id:'monthly_basic', name:'Monthly Basic', price:100, nextPrice:299, cycle:'monthly', desc:'R100 first month, then R299/month'},
+    {id:'six_month', name:'6 Months', price:1599, cycle:'6mo', desc:'Prepay 6 months (save R195)'},
+    {id:'yearly', name:'Yearly', price:2999, cycle:'yearly', desc:'Yearly (save R589)'}
+  ];
+  if(!localStorage.getItem('omni_subscriptions')) F.save('omni_subscriptions', DEFAULT_PLANS);
 
-  /* =========================================================
-     AI SERVICE TAG GENERATOR
-  ========================================================= */
-  if(HAS.index){
-    const specInput=$("#specialty");
-    if(specInput){
-      specInput.addEventListener("blur",()=>{
-        const txt=specInput.value.toLowerCase();
-        if(txt.includes("geyser")||txt.includes("pipe")||txt.includes("leak"))$("#bizCategory").value="Property & Maintenance::Plumbing";
-        if(txt.includes("roof"))$("#bizCategory").value="Property & Maintenance::Roofing";
-        if(txt.includes("solar")||txt.includes("panel"))$("#bizCategory").value="Security, Energy & Tech::Solar Installation";
-      });
+  window.populateCategorySelect = function(){
+    const sel=$('#bizCategory'); if(!sel) return; sel.innerHTML='';
+    for(const [cat, services] of Object.entries(CATEGORY_MAP)){
+      const og=document.createElement('optgroup'); og.label=cat;
+      services.forEach(s=>{ const o=document.createElement('option'); o.value=`${cat}::${s}`; o.textContent=s; og.appendChild(o); });
+      sel.appendChild(og);
     }
-  }
-
-  /* =========================================================
-     SUBSCRIPTION + GRACE PERIOD + REVENUE
-  ========================================================= */
-  function initSubscriptions(){
-    const defaultPlans=[
-      {id:"starter",name:"Starter Month",price:100,cycle:30,desc:"R100 first month, then R299 thereafter"},
-      {id:"standard",name:"Standard Monthly",price:299,cycle:30,desc:"R299/month after trial"},
-      {id:"halfyear",name:"6-Month Plan",price:1499,cycle:180,desc:"R1499/6 months (save R295)"},
-      {id:"yearly",name:"Yearly Plan",price:2999,cycle:365,desc:"R2999/year (save R589)"}
-    ];
-    if(!localStorage.getItem(keys.subs)) ls.set(keys.subs,defaultPlans);
-
-    /* ADMIN DASHBOARD */
-    if(HAS.adminModal){
-      const modal=$("#aBackdrop .modal");
-      modal.style.width="100%";
-      modal.style.height="100vh";
-      modal.style.maxWidth="none";
-      modal.style.padding="20px";
-      modal.style.overflowY="auto";
-
-      const dash=document.createElement("div");
-      dash.id="adminStats";
-      dash.style.marginTop="10px";
-      dash.innerHTML=`
-        <h2>📊 OmniSolutions Admin Dashboard</h2>
-        <div id="metrics" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;"></div>
-        <canvas id="revChart" width="600" height="300" style="background:#1b1736;border-radius:10px;margin-top:20px;"></canvas>
-      `;
-      modal.appendChild(dash);
-
-      function renderAdminStats(){
-        const jobs=ls.get(keys.jobs,[]);
-        const reviews=ls.get(keys.reviews,[]);
-        const partners=ls.get(keys.partners,[]);
-        const rev=ls.get(keys.rev,[]);
-        const active=partners.filter(p=>p.subExpiry && new Date(p.subExpiry)>new Date()).length;
-        const expired=partners.length-active;
-        const avgRating=(reviews.reduce((a,b)=>a+(b.stars||0),0)/Math.max(1,reviews.length)).toFixed(1);
-        const totalRev=rev.reduce((a,b)=>a+(b.amount||0),0);
-
-        $("#metrics").innerHTML=`
-          <div class="card">👷 Total Contractors<br><b>${partners.length}</b></div>
-          <div class="card">✅ Active Subs<br><b>${active}</b></div>
-          <div class="card">⚠️ Expired Subs<br><b>${expired}</b></div>
-          <div class="card">💰 Total Revenue<br><b>R${totalRev.toLocaleString()}</b></div>
-          <div class="card">📦 Total Jobs<br><b>${jobs.length}</b></div>
-          <div class="card">⭐ Avg Rating<br><b>${avgRating}</b></div>
-        `;
-
-        // Chart (if Chart.js available)
-        if(!window.Chart){
-          const s=document.createElement("script");
-          s.src="https://cdn.jsdelivr.net/npm/chart.js";
-          s.onload=()=>drawChart(rev);
-          document.body.appendChild(s);
-        } else drawChart(rev);
-      }
-
-      function drawChart(rev){
-        const ctx=document.getElementById("revChart").getContext("2d");
-        const byMonth={};
-        rev.forEach(r=>{
-          const d=new Date(r.date);
-          const key=`${d.getFullYear()}-${d.getMonth()+1}`;
-          byMonth[key]=(byMonth[key]||0)+r.amount;
-        });
-        const labels=Object.keys(byMonth);
-        const data=Object.values(byMonth);
-        new Chart(ctx,{type:"bar",data:{labels,datasets:[{label:"Revenue (R)",data,borderWidth:1}]}});
-      }
-
-      renderAdminStats();
-    }
-
-    /* CONTRACTOR SIDE */
-    if(HAS.contractorShell){
-      const phone=localStorage.getItem("contractor_phone");
-      const me=()=>{const list=ls.get(keys.partners,[]);return list.find(x=>x.phone===phone)};
-      const save=(rec)=>{const list=ls.get(keys.partners,[]);const i=list.findIndex(x=>x.phone===phone);if(i>-1){list[i]=rec;ls.set(keys.partners,list)}};
-      const box=document.createElement("div");
-      box.innerHTML=`
-        <h3 style="margin-top:25px">💸 My Subscription</h3>
-        <div id="subStatus" style="margin:6px 0;color:#ccc"></div>
-        <button class="btn" id="subRenew">Renew / Upgrade</button>
-      `;
-      document.querySelector("#dashboard")?.appendChild(box);
-
-      function render(){
-        const m=me(); if(!m)return;
-        const exp=m.subExpiry?new Date(m.subExpiry):null;
-        let status="✅ Active";
-        let expText="—";
-        if(exp){
-          expText=exp.toLocaleDateString();
-          const daysLeft=(exp-new Date())/86400000;
-          if(daysLeft<0)status="❌ Expired";
-          else if(daysLeft<=5)status=`⚠️ ${Math.ceil(daysLeft)} days left (grace period soon)`;
-        }
-        $("#subStatus").innerHTML=`
-          Plan: <b>${m.subPlan||"Starter Month"}</b><br>
-          Expires: <b>${expText}</b><br>Status: <b>${status}</b>
-        `;
-      }
-      render();
-
-      $("#subRenew").onclick=()=>{
-        const plans=ls.get(keys.subs,[]);
-        const names=plans.map(p=>`${p.name} (R${p.price})`).join("\n");
-        const choice=prompt(`Choose plan:\n${names}`,"Standard Monthly");
-        const plan=plans.find(p=>p.name.toLowerCase()===choice.toLowerCase());
-        if(!plan)return alert("Plan not found");
-        const m=me(); if(!m)return;
-        const next=new Date(Date.now()+plan.cycle*86400000);
-        m.subPlan=plan.name; m.subExpiry=next.toISOString();
-        save(m);
-        const rev=ls.get(keys.rev,[]);
-        rev.push({contractor:m.business,amount:plan.price,plan:plan.name,date:new Date().toISOString()});
-        ls.set(keys.rev,rev);
-        render();
-        alert(`✅ Subscribed to ${plan.name} for R${plan.price}`);
-      };
-
-      /* GRACE PERIOD NOTIFICATION */
-      setInterval(()=>{
-        const m=me(); if(!m)return;
-        if(!m.subExpiry)return;
-        const daysLeft=(new Date(m.subExpiry)-new Date())/86400000;
-        if(daysLeft>0 && daysLeft<=5){
-          alert(`⚠️ ${m.business}, your plan expires in ${Math.ceil(daysLeft)} days! Please renew soon.`);
-        }
-      },21600000); // every 6h
-    }
-  }
-
-  /* =========================================================
-     ADMIN EXTRAS
-  ========================================================= */
-  function addAdminExtras(){
-    if(!HAS.adminModal)return;
-    const modal=$("#aBackdrop .modal");
-    if(!modal)return;
-
-    const btn=document.createElement("button");
-    btn.className="btn"; btn.textContent="📄 Export Stats PDF";
-    btn.onclick=()=>{
-      if(!window.jspdf){
-        const s=document.createElement("script");
-        s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-        s.onload=makePDF;
-        document.body.appendChild(s);
-      }else makePDF();
-    };
-    function makePDF(){
-      const {jsPDF}=window.jspdf; const pdf=new jsPDF();
-      const jobs=ls.get(keys.jobs,[]); const revs=ls.get(keys.reviews,[]);
-      pdf.text("OmniSolutions Stats Report",20,20);
-      pdf.text(`Total Jobs: ${jobs.length}`,20,30);
-      pdf.text(`Total Reviews: ${revs.length}`,20,40);
-      pdf.save("stats_report.pdf");
-    }
-    modal.querySelector("div[style*='gap']")?.appendChild(btn);
-  }
-
-  /* =========================================================
-     CHATBOT IMPROVEMENTS
-  ========================================================= */
-  function enhanceChatbot(){
-    const chat=$("#chat"); if(!chat)return;
-    const head=chat.querySelector(".chat-head");
-    if(head&&!head.querySelector(".closeChat")){
-      const c=document.createElement("button");
-      c.textContent="❌ Close Chat";
-      c.className="btn secondary closeChat";
-      c.style.fontSize="12px";
-      c.onclick=()=>chat.style.display="none";
-      head.appendChild(c);
-    }
-
-    window.say=function(html,who="bot"){
-      const chatLog=$("#chatLog");
-      const d=document.createElement("div");
-      d.className="msg "+(who==="bot"?"bot":"user");
-      d.innerHTML=html;
-      chatLog.appendChild(d);
-      chatLog.scrollTop=chatLog.scrollHeight;
-    };
-
-    window.humanSay=function(text,delay=800){
-      say("<i>OmniSolutions Assistant is typing…</i>");
-      setTimeout(()=>{ $$("#chatLog .msg").pop()?.remove(); say(text,"bot"); },delay);
-    };
-
-    window.nextFinalize=function(){
-      const id="J-"+Date.now();
-      const CURRENT=window.CURRENT||{};
-      const job={
-        id,created:new Date().toISOString(),
-        customerName:CURRENT.name,customerPhone:CURRENT.phone,
-        area:CURRENT.area,category:CURRENT.category,
-        service:CURRENT.service,notes:CURRENT.notes,
-        status:"Pending",contractorPhone:CURRENT.chosen?CURRENT.chosen.phone:null
-      };
-      const js=ls.get(keys.jobs,[]); js.push(job); ls.set(keys.jobs,js);
-      humanSay(`Awesome 👍 Your ${CURRENT.service} request is now logged under Job ID <b>${id}</b>. We’ll update you once assigned.`);
-    };
-  }
-
-  /* =========================================================
-     FIX PLUMBER SEARCH LOGIC
-  ========================================================= */
-  window.__omni_prepare_partner_options__=function(list,service,area){
-    const refined=list.filter(p=>{
-      if((service||"").toLowerCase().includes("plumb"))return true;
-      if(!area)return true;
-      return (p.areas||"").toLowerCase().includes(area.toLowerCase());
+  };
+  window.populatePlanSelect = function(){
+    const sel=$('#subPlanSel'); if(!sel) return; sel.innerHTML='';
+    F.load('omni_subscriptions', DEFAULT_PLANS).forEach(p=>{
+      const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.name} — R${p.price}${p.nextPrice?` → R${p.nextPrice}/m`:''}`; sel.appendChild(o);
     });
-    return refined.sort((a,b)=>a.business.localeCompare(b.business));
   };
 
-  /* =========================================================
-     RUN ON LOAD
-  ========================================================= */
-  window.addEventListener("load",()=>{
-    try{addAdminExtras();}catch(e){}
-    try{enhanceChatbot();}catch(e){}
-    try{initSubscriptions();}catch(e){}
+  /* When a client finalizes a job (index chat), notify chosen contractor via their own Telegram bot if set */
+  async function sendContractorTelegram(contractorPhone, text){
+    const p = F.load('omni_partners',[]).find(x=>x.phone===contractorPhone);
+    if(!p || !p.telegramBotToken || !p.telegramChatId) return;
+    try{
+      await fetch(`https://api.telegram.org/bot${p.telegramBotToken}/sendMessage`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:p.telegramChatId,text,parse_mode:'HTML'})
+      });
+    }catch(e){}
+  }
+  window.__omni_notify_contractor__ = sendContractorTelegram;
+
+  /* ========== Patch index nextFinalize if present (non-breaking) ========== */
+  if(window.nextFinalize){
+    const orig = window.nextFinalize;
+    window.nextFinalize = async function(){
+      const beforeJobs = F.load('omni_jobs',[]);
+      await orig(); // original creates job
+      const afterJobs = F.load('omni_jobs',[]);
+      const j = afterJobs[afterJobs.length-1];
+      if(j && j.contractorPhone){
+        const txt = `🧰 NEW JOB\nID: ${j.id}\nService: ${j.service}\nArea: ${j.area}\nClient: ${j.customerName} (${j.customerPhone})\nNotes: ${j.notes||''}`;
+        await sendContractorTelegram(j.contractorPhone, txt);
+      }
+    };
+  }
+
+  /* ================== Admin Controls ================== */
+  const partnersTBody = $('#partnersTable tbody');
+  const leadsTBody = $('#leadsTable tbody');
+
+  // Renderers might be defined on page already; provide fallbacks that include Suspend/Unsuspend
+  if(partnersTBody && !window.renderPartners){
+    window.renderPartners = function(){
+      const list = F.load('omni_partners',[]);
+      partnersTBody.innerHTML='';
+      list.forEach(p=>{
+        const left = p.subNextBilling ? Math.ceil((new Date(p.subNextBilling)-Date.now())/86400000) : 0;
+        const subTxt = p.subStatus==='Expired'?'Expired': (left>=0?(left+'d'):'Expired');
+        const tr=document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.business}</td>
+          <td>${p.contact||''}</td>
+          <td>${p.phone||''}</td>
+          <td>${p.category||''}</td>
+          <td>${p.service||''}</td>
+          <td>${p.areas||''}</td>
+          <td>${p.suspended?'⛔ Suspended':(p.muted?'🔇 Muted':'🔔 Active')}</td>
+          <td>${subTxt}</td>
+          <td>${p.subPlan||'-'}</td>
+          <td>${(p.badges||[]).join(', ')||'-'}</td>
+          <td class="tools">
+            <button class="btn" data-id="${p.id}" data-act="extend">Extend +30d</button>
+            <button class="btn" data-id="${p.id}" data-act="mute">${p.muted?'Unmute':'Mute'}</button>
+            <button class="btn" data-id="${p.id}" data-act="toggleSuspend">${p.suspended?'Unsuspend':'Suspend'}</button>
+            <button class="btn danger" data-id="${p.id}" data-act="delP">Delete</button>
+          </td>
+        `;
+        partnersTBody.appendChild(tr);
+      });
+    };
+  }
+
+  partnersTBody && partnersTBody.addEventListener('click', e=>{
+    const t=e.target; if(!t.closest('button')) return;
+    const id=t.getAttribute('data-id'), act=t.getAttribute('data-act');
+    const list=F.load('omni_partners',[]); const p=list.find(x=>x.id===id); if(!p) return;
+    if(act==='extend'){ p.subNextBilling = new Date(Math.max(Date.now(), new Date(p.subNextBilling||Date.now()).getTime()) + 30*86400000).toISOString(); p.subStatus='Active'; F.save('omni_partners', list); window.renderPartners(); }
+    if(act==='mute'){ p.muted=!p.muted; F.save('omni_partners', list); window.renderPartners(); }
+    if(act==='toggleSuspend'){ p.suspended=!p.suspended; F.save('omni_partners', list); window.renderPartners(); alert(p.suspended?'Contractor suspended.':'Unsuspended.'); }
+    if(act==='delP'){ if(confirm('Delete contractor?')){ F.save('omni_partners', list.filter(x=>x.id!==id)); window.renderPartners(); } }
   });
-})();
 
-/* =========================================================
-   CHAT UI ENHANCEMENT + ANIMATED BUBBLES
-   ========================================================= */
-(function(){
-  const chat=document.getElementById("chat"); if(!chat)return;
-  const style=document.createElement("style");
-  style.textContent=`
-  .msg.bot{animation:slideIn .4s ease;box-shadow:0 0 12px #8a5cff55;border-radius:16px;padding:10px 14px;margin:6px 0;}
-  .msg.user{animation:slideInR .4s ease;box-shadow:0 0 10px #ffffff22;border-radius:16px;padding:10px 14px;margin:6px 0;text-align:right;}
-  @keyframes slideIn{from{opacity:0;transform:translateX(-15px);}to{opacity:1;transform:translateX(0);}}
-  @keyframes slideInR{from{opacity:0;transform:translateX(15px);}to{opacity:1;transform:translateX(0);}}
-  `;
-  document.head.appendChild(style);
-})();
+  // Leads renderer (fallback)
+  if(leadsTBody && !window.renderLeads){
+    window.renderLeads = function(){
+      const js=F.load('omni_jobs',[]);
+      leadsTBody.innerHTML='';
+      js.forEach(l=>{
+        const tr=document.createElement('tr');
+        const assigned=l.contractorPhone ? (F.load('omni_partners',[]).find(p=>p.phone===l.contractorPhone)?.business||l.contractorPhone) : 'Personal Agent';
+        tr.innerHTML=`
+          <td>${l.id}</td>
+          <td>${l.customerName||''}</td>
+          <td>${l.customerPhone||''}</td>
+          <td>${l.area||''}</td>
+          <td>${l.category||''}</td>
+          <td>${l.service||''}</td>
+          <td>${(l.notes||'').slice(0,80)}</td>
+          <td>${assigned}</td>
+          <td>${l.status||'Pending'}</td>
+          <td>${new Date(l.created).toLocaleString()}</td>
+          <td class="tools">
+            <button class="btn" data-id="${l.id}" data-act="dm">DM Assigned</button>
+            <button class="btn danger" data-id="${l.id}" data-act="delL">Delete</button>
+          </td>
+        `;
+        leadsTBody.appendChild(tr);
+      });
+    };
+  }
 
+  leadsTBody && leadsTBody.addEventListener('click', async e=>{
+    const t=e.target; if(!t.closest('button')) return;
+    const id=t.getAttribute('data-id'), act=t.getAttribute('data-act');
+    const list=F.load('omni_jobs',[]); const j=list.find(x=>x.id===id); if(!j) return;
+    if(act==='delL'){ if(confirm('Delete job?')){ F.save('omni_jobs', list.filter(x=>x.id!==id)); window.renderLeads(); } }
+    if(act==='dm'){
+      const txt=prompt('Message to assigned contractor:'); if(!txt) return;
+      const phone=j.contractorPhone; if(!phone) return alert('No contractor assigned.');
+      const key='omni_msgs_'+phone; const arr=F.load(key,[]); arr.push({from:'admin',text:txt,when:new Date().toISOString()}); F.save(key,arr);
+      // Also forward to contractor’s Telegram if configured
+      await sendContractorTelegram(phone, '📩 Admin message: '+txt);
+      alert('Sent.');
+    }
+  });
+
+  /* ================== Subscription watcher (3-day reminder + 5-day grace) ================== */
+  function subWatcher(){
+    const list=F.load('omni_partners',[]); const now=Date.now(); let changed=false;
+    list.forEach(p=>{
+      if(!p.subNextBilling) return;
+      const next=new Date(p.subNextBilling).getTime();
+      const diffDays=Math.floor((next-now)/86400000);
+      if(diffDays===3 && p.subStatus!=='Expired' && !p._reminded){ p._reminded=true; changed=true; alert(`⚠️ ${p.business} — subscription expires in 3 days`); }
+      if(diffDays<=0 && p.subStatus!=='Expired'){
+        p.subStatus = (diffDays>-5)?'Grace Period':'Expired';
+        changed=true;
+      }
+      if(diffDays<=-5 && p.subStatus!=='Expired'){ p.subStatus='Expired'; changed=true; }
+    });
+    if(changed) F.save('omni_partners',list);
+  }
+  subWatcher(); setInterval(subWatcher, 12*60*60*1000);
+
+  /* ================== Build service rails (index) if present ================== */
+  function buildRails(){
+    $$('.group-rail').forEach(rail=>{
+      const cat = rail.getAttribute('data-rail');
+      rail.innerHTML='';
+      (CATEGORY_MAP[cat]||[]).forEach(svc=>{
+        const b=document.createElement('div'); b.className='bubble'; b.textContent=svc; b.onclick=()=>window.startChat && window.startChat(cat, svc); rail.appendChild(b);
+      });
+      rail.classList.remove('hidden');
+      rail.parentElement.querySelector('[data-toggle]')?.addEventListener('click',()=>rail.classList.toggle('hidden'));
+    });
+  }
+  window.addEventListener('load', buildRails);
+
+})();
