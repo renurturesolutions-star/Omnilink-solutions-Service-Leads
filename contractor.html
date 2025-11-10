@@ -1,134 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OmniSolutions Contractor Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
-  <style>
-    :root{
-      --bg:#0b0a18;--panel:#18152f;--text:#f6f7fb;--muted:#c6c9de;
-      --brand:#8a5cff;--brand2:#6a4cff;--danger:#ff5c7a;
-    }
-    *{box-sizing:border-box;}
-    body{margin:0;font-family:Poppins,system-ui;background:var(--bg);color:var(--text);}
-    .card{background:var(--panel);border:1px solid #ffffff15;border-radius:14px;padding:16px;box-shadow:0 10px 26px #0004;}
-    .btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700;}
-    .btn:hover{opacity:.9;}
-    input,select{width:100%;padding:10px;border:none;border-radius:10px;background:#1e1b3b;color:#fff;}
-    .hidden{display:none;}
-    .login,.dashboard{max-width:420px;margin:50px auto;text-align:center;}
-    .fadeIn{animation:fadeSlide .5s ease forwards;}
-    @keyframes fadeSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contractor Access | OmniSolutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
+  --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
+  --good:#22d3a6; --bad:#ff5c7a; --shadow:0 14px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Poppins,system-ui;background:var(--bg1);color:var(--ink);
+  display:flex;justify-content:center;align-items:center;min-height:100vh;
+}
+.card{
+  background:linear-gradient(180deg,#18152f,#0b0a18);
+  border:1px solid #ffffff14;border-radius:16px;box-shadow:var(--shadow);
+  width:320px;max-width:90vw;text-align:center;padding:26px 18px;
+}
+h2{margin-top:0;font-size:20px;font-weight:800;color:#fff}
+input{
+  width:100%;padding:10px;border:none;border-radius:10px;margin:6px 0;
+  background:#211d3b;color:#fff;font-size:15px;
+}
+.btn{
+  width:100%;padding:10px;border:none;border-radius:10px;margin-top:6px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  font-weight:800;color:#0b0622;cursor:pointer;transition:.2s;
+}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.small{color:var(--muted);font-size:14px;margin-top:10px;cursor:pointer}
+.hidden{display:none}
+.dashboard{
+  display:none;flex-direction:column;align-items:center;text-align:center;
+  max-width:600px;width:96vw;padding:18px;background:linear-gradient(180deg,#18152f,#0b0a18);
+  border:1px solid #ffffff14;border-radius:18px;box-shadow:var(--shadow);
+}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px;width:100%}
+.stat{background:#211d3b;padding:12px;border-radius:12px}
+.jobs{width:100%;margin-top:18px;text-align:left}
+.job{background:#1d1a3c;border:1px solid #ffffff14;border-radius:10px;padding:10px;margin-top:8px}
+.logout{margin-top:20px;background:#ff5c7a;color:#fff}
+</style>
 </head>
 <body>
 
-<section id="loginView" class="login card">
+<div class="card" id="loginCard">
   <h2>🧰 Contractor Access</h2>
-  <input id="phone" placeholder="Phone number (e.g. 0821112222)" />
-  <input id="pass" type="password" placeholder="Password" />
+  <input id="phone" placeholder="Phone number">
+  <input id="password" placeholder="Password" type="password">
   <button class="btn" id="loginBtn">Login</button>
-  <p style="margin-top:8px;color:var(--muted)">or</p>
-  <button class="btn" id="newBtn" style="background:#2c2852">New Contractor? Sign Up</button>
-  <p id="forgot" style="color:#8a5cff;cursor:pointer;margin-top:10px">Forgot Password?</p>
-</section>
+  <div class="small" id="signup">New Contractor? Sign Up</div>
+  <div class="small" id="forgot">Forgot Password?</div>
+</div>
 
-<section id="signupView" class="login card hidden">
-  <h2>🧰 New Contractor Signup</h2>
-  <input id="biz" placeholder="Business Name">
-  <input id="name" placeholder="Contact Person">
-  <input id="email" placeholder="Email">
-  <input id="phone2" placeholder="Phone Number">
-  <input id="category" placeholder="Category (e.g. Plumbing)">
-  <input id="area" placeholder="Areas (e.g. Cape Town, Durban)">
-  <input id="pass2" type="password" placeholder="Create Password">
-  <button class="btn" id="signupBtn">Create Account</button>
-</section>
+<div class="dashboard" id="dash">
+  <h2>Welcome, <span id="bizName"></span> 👋</h2>
+  <div id="planInfo"></div>
+  <div class="stat-grid">
+    <div class="stat"><b id="jobCount">0</b><br>Jobs Received</div>
+    <div class="stat"><b id="reviewCount">0</b><br>Reviews</div>
+    <div class="stat"><b id="rating">0</b><br>Avg Rating ⭐</div>
+  </div>
 
-<section id="dashboard" class="dashboard card hidden">
-  <h2>📊 Contractor Dashboard</h2>
-  <p id="welcome"></p>
-  <button class="btn" id="viewPass">🔐 View My Login Details</button>
-  <div id="passInfo" class="hidden" style="margin-top:10px"></div>
+  <div class="jobs" id="jobList"></div>
 
-  <h3 style="margin-top:20px;">💸 Subscription Plans</h3>
-  <div id="subsList"></div>
-  <button class="btn" id="renewBtn" style="margin-top:10px">Renew / Upgrade</button>
-</section>
+  <button class="btn logout" id="logout">Logout</button>
+</div>
 
 <script>
-async function sha256(str){
-  const buf=new TextEncoder().encode(str);
-  const hash=await crypto.subtle.digest("SHA-256",buf);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
+const phone=document.getElementById('phone');
+const pass=document.getElementById('password');
+const loginBtn=document.getElementById('loginBtn');
+const signup=document.getElementById('signup');
+const forgot=document.getElementById('forgot');
+const dash=document.getElementById('dash');
+const card=document.getElementById('loginCard');
+
 function load(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
-const key="omni_partners";
 
-/* Login & Signup logic */
-const loginView=document.getElementById("loginView");
-const signupView=document.getElementById("signupView");
-const dash=document.getElementById("dashboard");
+let partners=load('omni_partners',[]);
+let jobs=load('omni_jobs',[]);
+let reviews=load('omni_reviews',[]);
 
-document.getElementById("newBtn").onclick=()=>{loginView.classList.add("hidden");signupView.classList.remove("hidden");};
-document.getElementById("loginBtn").onclick=async()=>{
-  const phone=phone.value.trim();
-  const pass=await sha256(pass.value.trim());
-  const list=load(key,[]);
-  const user=list.find(u=>u.phone===phone && u.pass===pass);
-  if(user){localStorage.setItem("contractor_phone",phone);showDash(user);}
-  else alert("❌ Invalid login.");
-};
-document.getElementById("signupBtn").onclick=async()=>{
-  const biz=biz.value.trim(), name=name.value.trim(), email=email.value.trim(), phone=phone2.value.trim(), cat=category.value.trim(), area=area.value.trim(), pass=await sha256(pass2.value.trim());
-  if(!biz||!phone||!pass){alert("Fill all fields.");return;}
-  const list=load(key,[]);
-  if(list.find(x=>x.phone===phone)){alert("Account exists, please login.");return;}
-  const now=Date.now(),month=30*86400000;
-  const subStart=now,subExpiry=now+month;
-  const user={business:biz,contact:name,email,phone,category:cat,areas:area,pass,subStart,subExpiry,subPlan:"monthly_basic"};
-  list.push(user);save(key,list);
-  localStorage.setItem("contractor_phone",phone);
-  showDash(user);
-};
-document.getElementById("forgot").onclick=()=>{
-  const phone=prompt("Enter your phone number:");
-  const list=load(key,[]);
-  const u=list.find(x=>x.phone===phone);
-  if(!u)return alert("No user found.");
-  alert("Your password hint: starts with "+(u.phone||"").slice(0,3)+" and has "+u.pass.length+" characters (encrypted)");
-};
-
-function showDash(user){
-  signupView.classList.add("hidden");
-  loginView.classList.add("hidden");
-  dash.classList.remove("hidden");
-  dash.classList.add("fadeIn");
-  document.getElementById("welcome").textContent=`Welcome ${user.business}!`;
-  renderSubs(user);
+function login(){
+  const ph=phone.value.trim();
+  const pw=pass.value.trim();
+  const p=partners.find(x=>x.phone===ph && x.pass===pw);
+  if(!p){alert('Invalid login');return;}
+  localStorage.setItem('omni_logged_contractor',ph);
+  openDashboard(p);
 }
-function renderSubs(u){
-  const div=document.getElementById("subsList");
-  div.innerHTML=`
-    <div class="card" style="background:#1e1a3b;margin:5px 0;">First Month: <b>R100</b></div>
-    <div class="card" style="background:#1e1a3b;margin:5px 0;">Following Months: <b>R299/month</b></div>
-    <div class="card" style="background:#1e1a3b;margin:5px 0;">6 Months: <b>R1499</b></div>
-    <div class="card" style="background:#1e1a3b;margin:5px 0;">Yearly: <b>R2999</b></div>
-  `;
+
+function openDashboard(p){
+  card.style.display='none';
+  dash.style.display='flex';
+  document.getElementById('bizName').textContent=p.business;
+  document.getElementById('planInfo').innerHTML=`<small>${p.category} → ${p.service}</small><br>
+    <small>Plan: ${p.subPlan||'None'} | Status: ${p.subStatus||'Active'}</small><br>
+    <small>Next Billing: ${p.subNextBilling?new Date(p.subNextBilling).toLocaleDateString():'n/a'}</small>`;
+  
+  // count jobs
+  const myJobs=jobs.filter(j=>j.contractorPhone===p.phone);
+  document.getElementById('jobCount').textContent=myJobs.length;
+  const myReviews=reviews.filter(r=>r.contractorPhone===p.phone);
+  document.getElementById('reviewCount').textContent=myReviews.length;
+  const avg=myReviews.length?(myReviews.reduce((a,b)=>a+b.stars,0)/myReviews.length).toFixed(1):0;
+  document.getElementById('rating').textContent=avg;
+
+  const list=document.getElementById('jobList');
+  list.innerHTML='<h3>Your Leads</h3>';
+  myJobs.slice().reverse().forEach(j=>{
+    list.innerHTML+=`<div class="job"><b>${j.service}</b><br>
+    ${j.customerName} • ${j.customerPhone}<br>
+    ${j.area}<br><small>${new Date(j.created).toLocaleString()}</small><br>
+    Notes: ${j.notes}</div>`;
+  });
 }
-document.getElementById("viewPass").onclick=()=>{
-  const phone=localStorage.getItem("contractor_phone");
-  const list=load(key,[]);
-  const u=list.find(x=>x.phone===phone);
-  const div=document.getElementById("passInfo");
-  div.classList.toggle("hidden");
-  div.innerHTML=`Business: ${u.business}<br>Phone: ${u.phone}<br>Password (encrypted): ${u.pass.slice(0,12)}…`;
+
+loginBtn.onclick=login;
+signup.onclick=()=>{window.location.href='index.html#cBackdrop'};
+forgot.onclick=()=>{
+  const ph=prompt('Enter your phone number to view your password:');
+  const p=partners.find(x=>x.phone===ph);
+  if(p) alert(`Your password: ${p.pass}`);
+  else alert('Not found.');
 };
-document.getElementById("renewBtn").onclick=()=>{
-  alert("Contact admin to renew. Subscription plans are recorded locally.");
+document.getElementById('logout').onclick=()=>{
+  localStorage.removeItem('omni_logged_contractor');
+  location.reload();
 };
+
+// Auto login
+const logged=localStorage.getItem('omni_logged_contractor');
+if(logged){
+  const p=partners.find(x=>x.phone===logged);
+  if(p) openDashboard(p);
+}
 </script>
 </body>
 </html>
