@@ -1,76 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="manifest" href="manifest.json">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OmniSolutions — All-in-One Service Network</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
-<style>
-:root{
-  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
-  --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
-  --good:#22d3a6; --bad:#ff5c7a; --shadow:0 14px 32px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box} body{margin:0;font-family:Poppins,system-ui;color:var(--ink);
-background:radial-gradient(1200px 800px at 10% -10%, #1a1740, #0b0a18 50%, #090818 100%);overflow-x:hidden}
-h1{margin:0;font-size:clamp(22px,3.5vw,40px)} a{color:inherit}
-.badge{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));font-weight:900;color:#0a061b;box-shadow:0 10px 26px #8a5cff55;margin:auto}
-.sub{color:var(--muted);margin-top:6px;font-size:15px}
-.hero{width:min(1200px,94vw);margin:30px auto 10px;position:relative;text-align:center}
-.cta-bar{width:min(1200px,94vw);margin:10px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0b0622;border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
-.btn.secondary{background:#231f41;color:#fff}.btn.danger{background:#ff5c7a;color:#fff}.btn:hover{opacity:.92}
-.top-right{position:absolute;top:10px;right:12px;display:flex;gap:8px}
-.chip{background:var(--chip);border:1px solid #ffffff14;padding:8px 10px;border-radius:999px;color:#e8e9ff}
-.section{width:min(1200px,94vw);margin:28px auto}
-.section h2{margin:14px 0 10px;font-size:22px}
-.group{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid #ffffff18;border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:14px}
-.group-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.group-title{font-weight:800}.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
-.bubble{background:#231f41;color:#fff;padding:12px;border-radius:999px;text-align:center;font-weight:700;cursor:pointer;border:1px solid #ffffff14}
-.bubble:hover{background:linear-gradient(135deg,var(--brand),var(--brand2));transform:translateY(-2px)}
-.hidden{display:none}
-.testimonials{margin-top:28px;text-align:center}
-.t-card{display:inline-block;background:#231f41;border:1px solid #ffffff14;padding:18px;border-radius:16px;max-width:720px;box-shadow:var(--shadow)}
-.stars{color:#ffd166;margin:6px 0}
-.live{margin-top:12px;text-align:center;color:#bfc3e0}
-.bottom-actions{margin:22px auto 60px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.chat-popup{position:fixed;bottom:96px;right:20px;width:360px;max-height:560px;background:#18152f;border:1px solid #ffffff1a;border-radius:14px;display:none;flex-direction:column;z-index:50;box-shadow:var(--shadow)}
-.chat-head{padding:10px 12px;border-bottom:1px solid #ffffff18;font-weight:800;display:flex;align-items:center;justify-content:space-between}
-.chat-log{padding:10px 12px;flex:1;overflow:auto}
-.msg{max-width:84%;padding:9px 11px;border-radius:12px;margin:6px 0;background:var(--chip2)}
-.msg.bot{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0e0727}
-.msg.user{align-self:flex-end;background:#2e2b48}
-.chat-compose{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff18}
-input,textarea,select{width:100%;padding:10px;border:none;border-radius:10px;background:#211d3b;color:#fff}
-canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
-.modal-backdrop{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:60}
-.modal{width:min(900px,94vw);background:#151230;border:1px solid #ffffff20;border-radius:18px;padding:16px;max-height:84vh;overflow:auto}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:640px){.row{grid-template-columns:1fr}}
-.ok{display:none;color:var(--good);font-weight:800;margin-top:8px}
-.table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:8px}
-.table th{font-size:12px;text-align:left;color:#cdd3f6}
-.table td{background:#201c3c;border:1px solid #ffffff15;padding:8px;border-radius:8px}
-.tools{display:flex;gap:8px;margin:6px 0 2px}
-.footer{color:#aab0cf;text-align:center;margin:36px 0 60px}
-.small{font-size:12px;color:#cbd0ef}
+<head>
+  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OmniSolutions — All-in-One Service Network</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
+      --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
+      --good:#22d3a6; --bad:#ff5c7a; --shadow:0 14px 32px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:Poppins,system-ui;color:var(--ink);
+      background:radial-gradient(1200px 800px at 10% -10%, #1a1740, #0b0a18 50%, #090818 100%);
+      overflow-x:hidden;
+    }
+    h1{margin:0;font-size:clamp(22px,3.5vw,40px)} a{color:inherit}
+    .badge{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--brand),var(--brand2));font-weight:900;color:#0a061b;
+      box-shadow:0 10px 26px #8a5cff55;margin:auto}
+    .sub{color:var(--muted);margin-top:6px;font-size:15px}
+    .hero{width:min(1200px,94vw);margin:30px auto 10px;position:relative;text-align:center}
+    .cta-bar{width:min(1200px,94vw);margin:10px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0b0622;border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);transition:.2s}
+    .btn.secondary{background:#231f41;color:#fff}.btn.danger{background:#ff5c7a;color:#fff}
+    .btn:hover{opacity:.92;transform:translateY(-1px)}
+    .top-right{position:absolute;top:10px;right:12px;display:flex;gap:8px}
+    .chip{background:var(--chip);border:1px solid #ffffff14;padding:8px 10px;border-radius:999px;color:#e8e9ff}
+    .section{width:min(1200px,94vw);margin:28px auto}
+    .section h2{margin:14px 0 10px;font-size:22px}
+    .group{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid #ffffff18;border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:14px}
+    .group-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+    .group-title{font-weight:800}
+    .group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+    .bubble{
+      background:#231f41;color:#fff;padding:12px 14px;border-radius:999px;border:1px solid #ffffff14;
+      font-weight:700;cursor:pointer;word-wrap:break-word;overflow-wrap:break-word;white-space:normal;line-height:1.3;
+      min-height:46px;display:flex;align-items:center;justify-content:center;text-align:center;transition:all .2s ease;
+    }
+    .bubble:hover{background:linear-gradient(135deg,var(--brand),var(--brand2));transform:translateY(-2px)}
+    .hidden{display:none}
+    .testimonials{margin-top:28px;text-align:center}
+    .t-card{display:inline-block;background:#231f41;border:1px solid #ffffff14;padding:18px;border-radius:16px;max-width:720px;box-shadow:var(--shadow);line-height:1.5}
+    .stars{color:#ffd166;margin:6px 0}
+    .live{margin-top:12px;text-align:center;color:#bfc3e0}
+    .bottom-actions{margin:22px auto 60px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .chat-popup{position:fixed;bottom:96px;right:20px;width:360px;max-height:560px;background:#18152f;border:1px solid #ffffff1a;border-radius:14px;display:none;flex-direction:column;z-index:50;box-shadow:var(--shadow)}
+    .chat-head{padding:10px 12px;border-bottom:1px solid #ffffff18;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .chat-log{padding:10px 12px;flex:1;overflow:auto}
+    .msg{max-width:84%;padding:10px 14px;border-radius:16px;margin:6px 0;background:var(--chip2);word-wrap:break-word;line-height:1.4}
+    .msg.bot{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0e0727}
+    .msg.user{align-self:flex-end;background:#2e2b48;color:#fff}
+    .chat-compose{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff18}
+    input,textarea,select{width:100%;padding:10px;border:none;border-radius:10px;background:#211d3b;color:#fff}
+    canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100}
+    .modal-backdrop{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:60}
+    .modal{width:min(900px,94vw);background:#151230;border:1px solid #ffffff20;border-radius:18px;padding:16px;max-height:84vh;overflow:auto}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:640px){.row{grid-template-columns:1fr}}
+    .ok{display:none;color:var(--good);font-weight:800;margin-top:8px}
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:8px}
+    .table th{font-size:12px;text-align:left;color:#cdd3f6}
+    .table td{background:#201c3c;border:1px solid #ffffff15;padding:8px;border-radius:8px}
+    .tools{display:flex;gap:8px;margin:6px 0 2px}
+    .footer{color:#aab0cf;text-align:center;margin:36px 0 60px}
+    .small{font-size:12px;color:#cbd0ef}
 
-/* contractor choice cards in chat */
-.c-card{background:#211d3b;border:1px solid #ffffff20;border-radius:12px;padding:10px;margin:8px 0}
-.c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.badge-pill{display:inline-block;background:#2a2550;border:1px solid #ffffff1a;border-radius:999px;padding:2px 8px;font-size:12px;color:#dfe3ff;margin-left:6px}
-.c-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.inlineBtn{display:inline-block;background:#2c2950;border:1px solid #ffffff20;padding:6px 10px;border-radius:8px;font-weight:800;margin-top:8px;cursor:pointer}
-.inlineBtn:hover{background:#3a3664}
-</style>
+    /* contractor cards (chat) */
+    .c-card{background:#211d3b;border:1px solid #ffffff20;border-radius:12px;padding:10px;margin:8px 0;word-wrap:break-word;transition:all .2s ease}
+    .c-card:hover{transform:scale(1.02);background:#29255a}
+    .c-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap}
+    .badge-pill{display:inline-block;background:#2a2550;border:1px solid #ffffff1a;border-radius:999px;padding:2px 8px;font-size:12px;color:#dfe3ff;margin-left:6px}
+    .c-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .inlineBtn{display:inline-block;background:#2c2950;border:1px solid #ffffff20;padding:6px 10px;border-radius:8px;font-weight:800;margin-top:8px;cursor:pointer}
+    .inlineBtn:hover{background:#3a3664}
+
+    /* ===== Admin Dashboard: full-screen modal makeover ===== */
+    #aBackdrop .modal{
+      width:100%!important;max-width:none!important;height:100vh!important;border-radius:0!important;
+      overflow-y:auto;background:linear-gradient(180deg,#0b0a18,#151230);color:#fff;animation:fadeIn .25s ease;
+    }
+    #adminGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+    .card{background:#1e1a38;border:1px solid #ffffff15;border-radius:16px;padding:14px;box-shadow:0 0 12px #0003;transition:all .2s ease}
+    .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px #0006}
+    .kpi{display:flex;align-items:center;justify-content:space-between}
+    .kpi b{font-size:22px}
+    #adminTopRow{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+    @media(max-width:980px){#adminTopRow{grid-template-columns:1fr}}
+    .chartBox{background:#191735;border:1px solid #ffffff18;border-radius:14px;padding:10px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .toolbar .btn{padding:8px 12px}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
 </head>
 <body>
 <canvas id="confetti"></canvas>
 
 <section class="hero">
   <div class="top-right">
-    <!-- keep Join as Contractor top-right -->
     <button class="btn secondary" id="openContractor">🧰 Join as Contractor</button>
   </div>
   <div class="badge">OS</div>
@@ -86,24 +116,15 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 <section class="section" id="catalog">
   <h2>Choose a category, then tap a service:</h2>
 
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🏠 Property & Maintenance</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🧹 Cleaning & Hygiene</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🔧 Renovations & Construction</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🏡 Property Sales & Rentals</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">💼 Business & Professional</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🔒 Security, Energy & Tech</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🚗 Automotive & Machinery</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🧑‍🤝‍🧑 Personal & Lifestyle</div><div>▼</div></div><div class="group-grid"></div></div>
-  <div class="group"><div class="group-header" data-toggle>
-      <div class="group-title">🌍 Environmental & Utilities</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🏠 Property & Maintenance</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🧹 Cleaning & Hygiene</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🔧 Renovations & Construction</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🏡 Property Sales & Rentals</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">💼 Business & Professional</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🔒 Security, Energy & Tech</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🚗 Automotive & Machinery</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🧑‍🤝‍🧑 Personal & Lifestyle</div><div>▼</div></div><div class="group-grid"></div></div>
+  <div class="group"><div class="group-header" data-toggle><div class="group-title">🌍 Environmental & Utilities</div><div>▼</div></div><div class="group-grid"></div></div>
 </section>
 
 <section class="section testimonials">
@@ -113,7 +134,6 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
     <div style="color:#cfd6ff">— Nomsa M., Durban</div>
   </div>
   <div class="bottom-actions">
-    <!-- bottom: Admin / Contractor Dashboard / Leave Review / Client Portal -->
     <button class="btn secondary" id="openAdmin">🔒 Admin</button>
     <a class="btn secondary" href="contractor.html">📊 Contractor Dashboard</a>
     <button class="btn" id="openReview">⭐ Leave a Review</button>
@@ -159,7 +179,7 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
   </div>
 </div>
 
-<!-- Admin modal -->
+<!-- Admin modal (full-screen) -->
 <div class="modal-backdrop" id="aBackdrop">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -167,54 +187,78 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
       <button class="btn" id="aClose" style="padding:6px 10px;font-size:12px">Close</button>
     </div>
 
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
-      <button class="btn" id="exportPartners">Export Partners CSV</button>
-      <button class="btn" id="exportLeads">Export Jobs CSV</button>
-      <button class="btn" id="backupBtn">Backup</button>
-      <input type="file" id="restoreInput" style="display:none" />
-      <button class="btn" id="restoreBtn">Restore</button>
-      <button class="btn" id="viewLog">View Activity Log</button>
-      <button class="btn" id="changeAdminPin">Change Admin PIN</button>
-      <button class="btn danger" id="clearPartners">Clear Partners</button>
-      <button class="btn danger" id="clearLeads">Clear Jobs</button>
+    <!-- Interactive tiles + quick stats -->
+    <div id="adminTopRow">
+      <div class="card">
+        <div class="kpi"><div>Total Partners</div><b id="kpiPartners">0</b></div>
+        <div class="kpi"><div>Active Leads</div><b id="kpiLeads">0</b></div>
+        <div class="kpi"><div>Avg Rating</div><b id="kpiRating">—</b></div>
+      </div>
+      <div class="card chartBox">
+        <canvas id="miniChart" height="110"></canvas>
+        <div class="small" style="opacity:.8;margin-top:6px">Jobs by Day (last 7)</div>
+      </div>
     </div>
 
-    <div class="row" style="margin:8px 0">
-      <input id="billingInfo" placeholder="Billing info shown on contractor dashboards (your payment details)">
-      <button class="btn" id="saveBilling">Save Billing Info</button>
-    </div>
+    <div id="adminGrid">
+      <div class="card">
+        <div class="toolbar">
+          <button class="btn" id="exportPartners">Export Partners CSV</button>
+          <button class="btn" id="exportLeads">Export Jobs CSV</button>
+          <button class="btn" id="backupBtn">Backup</button>
+          <input type="file" id="restoreInput" style="display:none" />
+          <button class="btn" id="restoreBtn">Restore</button>
+        </div>
+        <div class="toolbar">
+          <button class="btn" id="viewLog">View Activity Log</button>
+          <button class="btn" id="changeAdminPin">Change Admin PIN</button>
+          <button class="btn danger" id="clearPartners">Clear Partners</button>
+          <button class="btn danger" id="clearLeads">Clear Jobs</button>
+        </div>
+        <div class="row" style="margin:8px 0">
+          <input id="billingInfo" placeholder="Billing info shown on contractor dashboards (your payment details)">
+          <button class="btn" id="saveBilling">Save Billing Info</button>
+        </div>
+      </div>
 
-    <h4 style="margin:14px 0 6px">Partners</h4>
-    <div style="overflow:auto;max-height:24vh">
-      <table class="table" id="partnersTable">
-        <thead>
-          <tr><th>Business</th><th>Contact</th><th>Phone</th><th>Category</th><th>Service</th><th>Areas</th><th>Status</th><th>Sub Expiry</th><th>Last Active</th><th>Badges</th><th>Actions</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+      <div class="card">
+        <h4 style="margin:0 0 6px">Partners</h4>
+        <div style="overflow:auto;max-height:24vh">
+          <table class="table" id="partnersTable">
+            <thead>
+            <tr><th>Business</th><th>Contact</th><th>Phone</th><th>Category</th><th>Service</th><th>Areas</th><th>Status</th><th>Sub Expiry</th><th>Last Active</th><th>Badges</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
 
-    <h4 style="margin:18px 0 6px">Jobs / Leads</h4>
-    <div style="overflow:auto;max-height:24vh">
-      <table class="table" id="leadsTable">
-        <thead>
-          <tr><th>ID</th><th>Name</th><th>Phone</th><th>Area</th><th>Category</th><th>Service</th><th>Notes</th><th>Assigned To</th><th>Time</th><th>Actions</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+      <div class="card">
+        <h4 style="margin:0 0 6px">Jobs / Leads</h4>
+        <div style="overflow:auto;max-height:24vh">
+          <table class="table" id="leadsTable">
+            <thead>
+            <tr><th>ID</th><th>Name</th><th>Phone</th><th>Area</th><th>Category</th><th>Service</th><th>Notes</th><th>Assigned To</th><th>Time</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
 
-    <h4 style="margin:18px 0 6px">Direct Messages</h4>
-    <div class="row">
-      <select id="dmSelect"></select>
-      <input id="dmText" placeholder="Type a message to selected contractor">
+      <div class="card">
+        <h4 style="margin:0 0 6px">Direct Messages</h4>
+        <div class="row">
+          <select id="dmSelect"></select>
+          <input id="dmText" placeholder="Type a message to selected contractor">
+        </div>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="sendDM">Send DM</button>
+          <button class="btn" id="broadcastAll">Broadcast to All (unmuted)</button>
+          <button class="btn" id="msgClients">Broadcast to Clients</button>
+        </div>
+        <div id="dmOk" class="ok">✅ Sent.</div>
+      </div>
     </div>
-    <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" id="sendDM">Send DM</button>
-      <button class="btn" id="broadcastAll">Broadcast to All (unmuted)</button>
-      <button class="btn" id="msgClients">Broadcast to Clients</button>
-    </div>
-    <div id="dmOk" class="ok">✅ Sent.</div>
   </div>
 </div>
 
@@ -299,7 +343,10 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 <div class="chat-popup" id="chat">
   <div class="chat-head">
     <span>💜 OmniSolutions Assistant</span>
-    <button class="btn secondary" id="trackBtn" style="padding:4px 8px;font-size:12px">Track Job</button>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">
+      <button class="btn secondary" id="trackBtn" style="padding:4px 8px;font-size:12px">Track Job</button>
+      <button class="btn secondary" id="closeChatBtn" style="padding:4px 8px;font-size:12px">Close Chat</button>
+    </div>
   </div>
   <div class="chat-log" id="chatLog"></div>
   <div class="chat-compose">
@@ -312,7 +359,7 @@ canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:non
 <script>
 /* ================== Settings (Telegram) ================== */
 const TELEGRAM_BOT_TOKEN = "8590267654:AAG24Oo6GlAUjVxZ1JXjNLNq_LZ5gIK4BDs"; // keep or remove
-const TELEGRAM_CHAT_IDS = [8187670531][8558139331]; // keep or remove
+const TELEGRAM_CHAT_IDS = ["8187670531","8558139331"]; // ✅ fixed array format
 async function sendTelegram(text, specificId=null){
   if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_IDS.length) return;
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -323,7 +370,7 @@ async function sendTelegram(text, specificId=null){
 }
 
 /* ================== Admin PIN ================== */
-function getAdminPin(){ return localStorage.getItem('omni_admin_pin') || null; }
+function getAdminPin(){ return localStorage.getItem('omni_admin_pin') || "4321"; }
 function setAdminPin(v){ localStorage.setItem('omni_admin_pin', v); }
 
 /* ================== Storage helpers ================== */
@@ -354,7 +401,7 @@ const CATEGORY_MAP = {
   "Environmental & Utilities":["Boreholes/Water","Water Treatment","Waste Disposal","Recycling","Tree Felling","Energy Audits","Garden Services","Fire Safety/Extinguishers","Environmental Compliance"]
 };
 
-/* Build catalog (open all groups) */
+/* Build catalog (expand all groups initially) */
 document.querySelectorAll('.group').forEach((grp,i)=>{
   const grid = grp.querySelector('.group-grid');
   const header = grp.querySelector('[data-toggle]');
@@ -366,6 +413,25 @@ document.querySelectorAll('.group').forEach((grp,i)=>{
   grid.classList.remove('hidden');
 });
 
+/* ================== Contractor seeding (only if empty) ================== */
+(function seed(){
+  const partners = loadPartners(); if(partners.length) return;
+  const now=Date.now(), month=30*24*3600*1000;
+  const samples = [
+    {business:"RapidFlow Plumbing",contact:"Thabo",phone:"0821112222",category:"Property & Maintenance",service:"Plumbing",areas:"Cape Town; Milnerton; Table View",specialty:"Geysers",muted:false},
+    {business:"SparkRight Electrical",contact:"Nomsa",phone:"0832223333",category:"Property & Maintenance",service:"Electrical",areas:"JHB; Randburg; Sandton",specialty:"Rewiring",muted:false},
+    {business:"SkyRoof",contact:"Pieter",phone:"0843334444",category:"Property & Maintenance",service:"Roofing",areas:"Pretoria; Centurion",specialty:"Leaks",muted:false},
+    {business:"CrystalClean Pros",contact:"Aisha",phone:"0815556666",category:"Cleaning & Hygiene",service:"Deep Cleaning",areas:"Durban; Umhlanga",specialty:"Post-renovation",muted:false},
+    {business:"GuardSight CCTV",contact:"Zed",phone:"0827778888",category:"Security, Energy & Tech",service:"CCTV Installation",areas:"Cape Town; Bellville",specialty:"Retail",muted:false},
+    {business:"GreenLeaf Landscapes",contact:"Kea",phone:"0721114444",category:"Property & Maintenance",service:"Landscaping",areas:"JHB; Fourways",specialty:"Irrigation",muted:false},
+    {business:"SunGrid Solar",contact:"Mandla",phone:"0715551234",category:"Security, Energy & Tech",service:"Solar Installation",areas:"Pretoria; Midrand",specialty:"Hybrid Systems",muted:false},
+    {business:"AutoFix Panel",contact:"Riaz",phone:"0793219876",category:"Automotive & Machinery",service:"Panel Beating",areas:"Cape Town; Epping",specialty:"Insurance",muted:false},
+    {business:"TopTile Projects",contact:"Rene",phone:"0605557777",category:"Renovations & Construction",service:"Tiling",areas:"JHB; Roodepoort",specialty:"Porcelain",muted:false},
+    {business:"FreshAir HVAC",contact:"Chris",phone:"0659081122",category:"Property & Maintenance",service:"HVAC",areas:"Durban; Pinetown",specialty:"Commercial",muted:false}
+  ].map(x=>({...x,id:'p_'+(now+Math.random()*1000|0),created:new Date().toISOString(),subStart:now,subExpiry:now+month,badges:[]}));
+  savePartners(samples);
+})();
+
 /* Live ticker */
 (function ticker(){
   const el=document.getElementById('liveFeed');
@@ -376,65 +442,141 @@ document.querySelectorAll('.group').forEach((grp,i)=>{
 /* Confetti */
 const confettiCanvas=document.getElementById('confetti'), cfx=confettiCanvas.getContext('2d');
 function size(){ confettiCanvas.width=innerWidth; confettiCanvas.height=innerHeight; } size(); addEventListener('resize', size);
-function confettiBurst(){ const cols=['#8a5cff','#6a4cff','#23d5ab','#7ee6d5','#ffd166']; const parts=Array.from({length:140},()=>({x:innerWidth/2,y:innerHeight,r:3+Math.random()*5,dx:-7+Math.random()*14,dy:-12-Math.random()*9,c:cols[(Math.random()*cols.length)|0],life:120})); let f=0;(function draw(){ cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); parts.forEach(p=>{ cfx.beginPath(); cfx.arc(p.x,p.y,p.r,0,Math.PI*2); cfx.fillStyle=p.c; cfx.fill(); p.x+=p.dx;p.y+=p.dy;p.dy+=.25;p.life--;}); f++; if(f<120) requestAnimationFrame(draw); else cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); })(); }
+function confettiBurst(){
+  const cols=['#8a5cff','#6a4cff','#23d5ab','#7ee6d5','#ffd166'];
+  const parts=Array.from({length:140},()=>({x:innerWidth/2,y:innerHeight,r:3+Math.random()*5,dx:-7+Math.random()*14,dy:-12-Math.random()*9,c:cols[(Math.random()*cols.length)|0],life:120}));
+  let f=0;(function draw(){
+    cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    parts.forEach(p=>{ cfx.beginPath(); cfx.arc(p.x,p.y,p.r,0,Math.PI*2); cfx.fillStyle=p.c; cfx.fill(); p.x+=p.dx;p.y+=p.dy;p.dy+=.25;p.life--;});
+    f++; if(f<120) requestAnimationFrame(draw); else cfx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  })();
+}
 
 /* Reviews modal */
 const rBackdrop=document.getElementById('rBackdrop'); document.getElementById('openReview').onclick=()=>rBackdrop.style.display='grid';
 document.getElementById('rClose').onclick=()=>rBackdrop.style.display='none';
-document.getElementById('revSubmit').onclick=()=>{ const id=(revJobId.value||'').trim(); const stars=parseInt((revStars.value||'').trim(),10); const name=(revName.value||'').trim(); const phone=(revPhone.value||'').trim(); const comment=(revComment.value||'').trim(); if(!id||!stars||stars<1||stars>5){ alert("Enter Job ID and stars 1–5."); return; } const j=jobs().find(x=>x.id===id); if(!j){ alert("Job not found."); return; } const list=reviews(); list.push({jobId:id,contractorPhone:j.contractorPhone||'agent',stars,comment,customerName:name,customerPhone:phone,when:new Date().toISOString()}); saveReviews(list); revOk.style.display='block'; setTimeout(()=>{ rBackdrop.style.display='none'; revOk.style.display='none'; },1600); };
+document.getElementById('revSubmit').onclick=()=>{
+  const id=(revJobId.value||'').trim(); const stars=parseInt((revStars.value||'').trim(),10);
+  const name=(revName.value||'').trim(); const phone=(revPhone.value||'').trim(); const comment=(revComment.value||'').trim();
+  if(!id||!stars||stars<1||stars>5){ alert("Enter Job ID and stars 1–5."); return; }
+  const j=jobs().find(x=>x.id===id); if(!j){ alert("Job not found."); return; }
+  const list=reviews(); list.push({jobId:id,contractorPhone:j.contractorPhone||'agent',stars,comment,customerName:name,customerPhone:phone,when:new Date().toISOString()});
+  saveReviews(list); revOk.style.display='block'; setTimeout(()=>{ rBackdrop.style.display='none'; revOk.style.display='none'; },1600);
+};
 
 /* Client portal */
 const clBackdrop=document.getElementById('clBackdrop'); document.getElementById('openClient').onclick=()=>clBackdrop.style.display='grid';
 clClose.onclick=()=>clBackdrop.style.display='none';
 function getClient(phone){ return loadClients().find(c=>c.phone===phone); }
 function saveClient(rec){ const arr=loadClients(); const i=arr.findIndex(c=>c.phone===rec.phone); if(i>-1) arr[i]=rec; else arr.push(rec); saveClients(arr); }
-function renderClientDash(c){ clDash.style.display='block'; const left = c.subExpiry? Math.max(0, Math.ceil((c.subExpiry-Date.now())/86400000)) : 0; clSubTxt.innerHTML = c.subExpiry && c.subExpiry>Date.now() ? `Active • expires in <b>${left} day(s)</b>` : `Expired • click “Renew +30 days” (client subscription)`; clChat.innerHTML = (load('omni_client_msgs_'+c.phone,[])).map(m=>`<div>${new Date(m.when).toLocaleString()} — <b>${m.from}</b>: ${m.text}</div>`).join(''); clChat.scrollTop = clChat.scrollHeight; }
-clLogin.onclick=()=>{ const name=clName.value.trim(), phone=clPhone.value.replace(/\D/g,''); const email=clEmail.value.trim(); const pin=clPin.value.trim(); if(!phone||!pin){ alert("Phone & PIN required"); return; } let c=getClient(phone); const now=Date.now(); if(!c){ c={name,phone,email,pin,subStart:now,subExpiry:now+30*86400000}; } else if(c.pin!==pin){ alert("Wrong PIN"); return; } saveClient(c); clMsg.style.display='block'; setTimeout(()=>clMsg.style.display='none',1200); renderClientDash(c); localStorage.setItem('omni_client_phone', phone); };
+function renderClientDash(c){
+  clDash.style.display='block';
+  const left = c.subExpiry? Math.max(0, Math.ceil((c.subExpiry-Date.now())/86400000)) : 0;
+  clSubTxt.innerHTML = c.subExpiry && c.subExpiry>Date.now() ? `Active • expires in <b>${left} day(s)</b>` : `Expired • click “Renew +30 days” (client subscription)`;
+  clChat.innerHTML = (load('omni_client_msgs_'+c.phone,[])).map(m=>`<div>${new Date(m.when).toLocaleString()} — <b>${m.from}</b>: ${m.text}</div>`).join('');
+  clChat.scrollTop = clChat.scrollHeight;
+}
+clLogin.onclick=()=>{
+  const name=clName.value.trim(), phone=clPhone.value.replace(/\D/g,''); const email=clEmail.value.trim(); const pin=clPin.value.trim();
+  if(!phone||!pin){ alert("Phone & PIN required"); return; }
+  let c=getClient(phone); const now=Date.now();
+  if(!c){ c={name,phone,email,pin,subStart:now,subExpiry:now+30*86400000}; }
+  else if(c.pin!==pin){ alert("Wrong PIN"); return; }
+  saveClient(c); clMsg.style.display='block'; setTimeout(()=>clMsg.style.display='none',1200);
+  renderClientDash(c); localStorage.setItem('omni_client_phone', phone);
+};
 clExtend.onclick=()=>{ const phone=localStorage.getItem('omni_client_phone'); if(!phone) return; const c=getClient(phone); if(!c) return; c.subExpiry = Math.max(Date.now(), c.subExpiry||0) + 30*86400000; saveClient(c); renderClientDash(c); };
 clChatSend.onclick=()=>{ const phone=localStorage.getItem('omni_client_phone'); if(!phone) return; const text=(clChatInput.value||'').trim(); if(!text) return; const key='omni_client_msgs_'+phone; const arr=load(key,[]); arr.push({from:'Client',text,when:new Date().toISOString()}); save(key,arr); clChatInput.value=''; renderClientDash(getClient(phone)); };
 
-/* Contractor signup (modal on main page) */
+/* Contractor signup */
 const cBackdrop=document.getElementById('cBackdrop'); document.getElementById('openContractor').onclick=()=>{ cBackdrop.style.display='grid'; populateCategorySelect(); };
 document.getElementById('cClose').onclick=()=>cBackdrop.style.display='none';
-function populateCategorySelect(){ const sel=document.getElementById('bizCategory'); sel.innerHTML=''; for(const [cat, services] of Object.entries(CATEGORY_MAP)){ const og=document.createElement('optgroup'); og.label=cat; services.forEach(s=>{ const opt=document.createElement('option'); opt.value=`${cat}::${s}`; opt.textContent=s; og.appendChild(opt); }); sel.appendChild(og); } }
-document.getElementById('conSubmit').onclick=async()=>{ const name=bizName.value.trim(); const contact=ownerName.value.trim(); const email=bizEmail.value.trim(); const phone=bizPhone.value.trim(); const svcSel=bizCategory.value; const areas=document.getElementById('areas').value.trim(); const specialty=document.getElementById('specialty').value.trim(); const website=document.getElementById('website').value.trim(); const vat=document.getElementById('vat').value.trim(); const ref=document.getElementById('ref').value.trim();
+function populateCategorySelect(){
+  const sel=document.getElementById('bizCategory'); sel.innerHTML='';
+  for(const [cat, services] of Object.entries(CATEGORY_MAP)){
+    const og=document.createElement('optgroup'); og.label=cat;
+    services.forEach(s=>{ const opt=document.createElement('option'); opt.value=`${cat}::${s}`; opt.textContent=s; og.appendChild(opt); });
+    sel.appendChild(og);
+  }
+}
+document.getElementById('conSubmit').onclick=async()=>{
+  const name=bizName.value.trim(); const contact=ownerName.value.trim(); const email=bizEmail.value.trim(); const phone=bizPhone.value.replace(/\D/g,'');
+  const svcSel=bizCategory.value; const areas=document.getElementById('areas').value.trim();
+  const specialty=document.getElementById('specialty').value.trim(); const website=document.getElementById('website').value.trim();
+  const vat=document.getElementById('vat').value.trim(); const ref=document.getElementById('ref').value.trim();
   if(!name||!phone||!svcSel){ alert('Please fill name, phone and service.'); return; }
   const [category,service]=svcSel.split('::'); const list=loadPartners(); const now=Date.now(); const month=30*24*3600*1000;
   if(list.find(p=>p.phone===phone)){ alert('That phone is already registered.'); return; }
-  list.push({id:'p_'+Date.now(),business:name,contact,email,phone,category,service,areas, specialty,website,vat,ref,created:new Date().toISOString(),muted:false,subStart:now,subExpiry:now+month,badges:[]});
-  savePartners(list); document.getElementById('conOk').style.display='block'; confettiBurst(); try{ await sendTelegram(`🚨 *New Partner* — ${name}\n${phone}\n${category} → ${service}\nAreas: ${areas}\nFree trial: 30 days\n${new Date().toLocaleString()}`);}catch(e){}
+  list.push({id:'p_'+Date.now(),business:name,contact,email,phone,category,service,areas, specialty,website,vat,ref,created:new Date().toISOString(),muted:false,subStart:now,subExpiry:now+month,subStatus:'Active',badges:[]});
+  savePartners(list);
+  document.getElementById('conOk').style.display='block'; confettiBurst();
+  try{
+    await sendTelegram(`🚨 *New Partner* — ${name}\n${phone}\n${category} → ${service}\nAreas: ${areas}\nFree trial: 30 days\n${new Date().toLocaleString()}`);
+  }catch(e){}
 };
 
 /* Job tracker */
 const tBackdrop=document.getElementById('tBackdrop'); tClose.onclick=()=>tBackdrop.style.display='none';
 document.getElementById('trackBtn').onclick=()=>tBackdrop.style.display='grid';
-tFind.onclick=()=>{ const id=tInput.value.trim(); const j=jobs().find(x=>x.id===id); tResult.innerHTML=j?`<b>Status:</b> ${j.status}<br><b>Service:</b> ${j.service}<br><b>Area:</b> ${j.area}<br><b>Assigned:</b> ${j.contractorPhone||'Personal Agent'}`:`❌ Not found`; };
+tFind.onclick=()=>{
+  const id=tInput.value.trim(); const j=jobs().find(x=>x.id===id);
+  tResult.innerHTML=j?`<b>Status:</b> ${j.status}<br><b>Service:</b> ${j.service}<br><b>Area:</b> ${j.area}<br><b>Assigned:</b> ${j.contractorPhone||'Personal Agent'}`:`❌ Not found`;
+};
 
-/* Chat (kept lightweight; 10s close delay after finalize) */
+/* Chat */
 const chat=document.getElementById('chat'), chatLog=document.getElementById('chatLog'), chatInput=document.getElementById('chatInput');
+document.getElementById('closeChatBtn').onclick=()=>{ chat.style.display='none'; };
 let CURRENT={category:null,service:null,name:null,phone:null,area:null,notes:null,step:0,options:[],chosen:null};
-function say(html,who='bot'){ const d=document.createElement('div'); d.className='msg '+(who==='bot'?'bot':'user'); d.innerHTML=html; chatLog.appendChild(d); chatLog.scrollTop=chatLog.scrollHeight; }
-function startChat(category,service){ CURRENT={category,service,step:0,options:[],chosen:null}; chat.style.display='flex'; chatLog.innerHTML=''; say(`Hi 👋 Let's sort your <b>${service}</b> request.`); setTimeout(()=>say("What’s your full name?"), 600); }
-chatInput.addEventListener('keydown', async (e)=>{ if(e.key!=='Enter') return; const val=chatInput.value.trim(); if(!val) return; say(val,'user'); chatInput.value=''; switch(CURRENT.step){
-  case 0: CURRENT.name=val; say(`Nice to meet you, ${CURRENT.name}! 📞 Your phone number?`); CURRENT.step=1; break;
-  case 1: CURRENT.phone=val.replace(/\D/g,''); say("📍 Which area/suburb are you in?"); CURRENT.step=2; break;
-  case 2: CURRENT.area=val; say("📝 Briefly describe the issue or what you need."); CURRENT.step=3; break;
-  case 3:
-    CURRENT.notes=val;
-    const partners=loadPartners().filter(p=>!p.muted && p.category===CURRENT.category && p.service===CURRENT.service && (p.areas||'').toLowerCase().includes((CURRENT.area||'').toLowerCase()));
-    if(partners.length){
-      CURRENT.options=(window.__omni_prepare_partner_options__?window.__omni_prepare_partner_options__(partners,CURRENT.service,CURRENT.area):partners).slice(0,6);
-      say(`🔎 I found ${CURRENT.options.length} local <b>${CURRENT.service}</b> provider(s) in <b>${CURRENT.area}</b>. Please pick or type <b>skip</b> for a personal agent.`);
-      CURRENT.options.forEach((p,i)=>{ say(`<div class="c-card"><div class="c-head"><div><b>${i+1}. ${p.business}</b> <span class="badge-pill">${p.category.split(' ')[0]}</span></div><div>${formatLastActive(p.lastActive)}</div></div><div>${p.contact||''} • ${p.phone}</div><div class="inlineBtn" onclick="pickContractor(${i+1})">Choose #${i+1}</div></div>`); });
-      CURRENT.step=4;
-    } else { say(`😅 No saved partners in ${CURRENT.area} yet for ${CURRENT.service}. We'll route this to a personal agent.`); CURRENT.chosen=null; CURRENT.step=5; nextFinalize(); }
-    break;
-  case 4: {
-    const s=val.toLowerCase(); if(s==='skip'){ CURRENT.chosen=null; CURRENT.step=5; nextFinalize(); break; }
-    const idx=parseInt(val,10); if(!idx||idx<1||idx>CURRENT.options.length){ say("Please enter a valid number or type <b>skip</b>."); } else { CURRENT.chosen=CURRENT.options[idx-1]; say(`✅ Selected: ${CURRENT.chosen.business}. Finalizing your request…`); CURRENT.step=5; nextFinalize(); }
-    break;
+function say(html,who='bot'){
+  const d=document.createElement('div'); d.className='msg '+(who==='bot'?'bot':'user'); d.innerHTML=html;
+  // subtle entry animation
+  d.style.animation = who==='bot' ? 'slideIn .25s ease' : 'slideInR .25s ease';
+  chatLog.appendChild(d); chatLog.scrollTop=chatLog.scrollHeight;
+}
+function startChat(category,service){
+  CURRENT={category,service,step:0,options:[],chosen:null}; chat.style.display='flex'; chatLog.innerHTML='';
+  say(`Hi 👋 Let's sort your <b>${service}</b> request.`); setTimeout(()=>say("What’s your full name?"), 600);
+}
+chatInput.addEventListener('keydown', async (e)=>{
+  if(e.key!=='Enter') return; const val=chatInput.value.trim(); if(!val) return;
+  say(val,'user'); chatInput.value='';
+  switch(CURRENT.step){
+    case 0: CURRENT.name=val; say(`Nice to meet you, ${CURRENT.name}! 📞 Your phone number?`); CURRENT.step=1; break;
+    case 1: CURRENT.phone=val.replace(/\D/g,''); say("📍 Which area/suburb are you in?"); CURRENT.step=2; break;
+    case 2: CURRENT.area=val; say("📝 Briefly describe the issue or what you need."); CURRENT.step=3; break;
+    case 3:
+      CURRENT.notes=val;
+      // partners: show all for Plumbing regardless of area; else area filter
+      const all=loadPartners().filter(p=>!p.muted && p.category===CURRENT.category && p.service===CURRENT.service);
+      const partners = CURRENT.service.toLowerCase().includes('plumb') ? all : all.filter(p=> (p.areas||'').toLowerCase().includes((CURRENT.area||'').toLowerCase()));
+      if(partners.length){
+        // sort: featured/rating/lastActive could be added; here simple alpha
+        CURRENT.options=partners.slice().sort((a,b)=>a.business.localeCompare(b.business)).slice(0,6);
+        say(`🔎 I found ${CURRENT.options.length} <b>${CURRENT.service}</b> provider(s). Please pick or type <b>skip</b> for a personal agent.`);
+        CURRENT.options.forEach((p,i)=>{
+          const badgeHtml=(p.badges||[]).map(b=>`<span class="badge-pill">${b}</span>`).join('');
+          say(`<div class="c-card">
+              <div class="c-head"><div><b>${i+1}. ${p.business}</b> <span class="badge-pill">${(p.category||'').split(' ')[0]}</span></div><div>${formatLastActive(p.lastActive)}</div></div>
+              <div>${p.contact||''} • ${p.phone}</div>
+              <div class="small" style="margin-top:4px;opacity:.8">Areas: ${p.areas||'-'}</div>
+              <div class="c-badges">${badgeHtml}</div>
+              <div class="inlineBtn" onclick="pickContractor(${i+1})">Choose #${i+1}</div>
+            </div>`);
+        });
+        CURRENT.step=4;
+      } else {
+        say(`😅 No saved partners in ${CURRENT.area} yet for ${CURRENT.service}. We'll route this to a personal agent.`);
+        CURRENT.chosen=null; CURRENT.step=5; nextFinalize();
+      }
+      break;
+    case 4: {
+      const s=val.toLowerCase(); if(s==='skip'){ CURRENT.chosen=null; CURRENT.step=5; nextFinalize(); break; }
+      const idx=parseInt(val,10); if(!idx||idx<1||idx>CURRENT.options.length){ say("Please enter a valid number or type <b>skip</b>."); }
+      else { CURRENT.chosen=CURRENT.options[idx-1]; say(`✅ Selected: ${CURRENT.chosen.business}. Finalizing your request…`); CURRENT.step=5; nextFinalize(); }
+      break;
+    }
   }
-}});
+});
 window.pickContractor=(n)=>{ if(CURRENT.step!==4) return; chatInput.value=String(n); const e=new KeyboardEvent('keydown',{key:'Enter'}); chatInput.dispatchEvent(e); };
 
 async function nextFinalize(){
@@ -446,31 +588,69 @@ async function nextFinalize(){
   }catch(e){}
   say(`✅ Thanks! Your request is logged.\nYour Job ID is <b>${id}</b>. You can leave a review later via “⭐ Leave a Review”.`);
   confettiBurst();
-  setTimeout(()=>{ document.getElementById('chat').style.display='none'; }, 10000);
+  // Chat stays open until the user closes it with the button (no auto-close)
 }
 
 /* Helpers */
 function formatLastActive(ts){ if(!ts) return "Offline"; const mins=Math.floor((Date.now()-ts)/60000); if(mins<5) return "🟢 Online"; if(mins<60) return `${mins}m ago`; const hrs=Math.floor(mins/60); return `${hrs}h ago`; }
 
-/* Admin panel — handlers defined in addons_master.js too */
-document.getElementById('trackBtn').onclick=()=>tBackdrop.style.display='grid';
-</script>
-
-<!-- Single merged master script -->
-<script src="addons_master.js"></script>
-  <script>
-/* Admin PIN Login */
+/* ================== Admin Panel ================== */
+const aBackdrop=document.getElementById('aBackdrop');
 document.getElementById("openAdmin").onclick=()=>{
   let pin=prompt("Enter Admin PIN:");
   if(!pin)return;
-  const saved=localStorage.getItem("omni_admin_pin")||"4321";
+  const saved=getAdminPin();
   if(pin===saved){
-    document.getElementById("aBackdrop").style.display="grid";
+    aBackdrop.style.display="grid";
+    renderPartners(); renderLeads(); populateDMSelect(); billingInfo.value=localStorage.getItem('omni_billing_info')||'';
+    refreshAdminKPIs(); drawMiniChart();
   }else alert("❌ Incorrect PIN");
 };
-document.getElementById("aClose").onclick=()=>document.getElementById("aBackdrop").style.display="none";
-</script>
-</body>
-</html>
+document.getElementById("aClose").onclick=()=>aBackdrop.style.display="none";
+document.getElementById('changeAdminPin').onclick=()=>{ const cur=prompt("Enter current PIN:"); if(cur!==getAdminPin()) { alert("Wrong PIN"); return; } const np=prompt("Enter new PIN:"); if(!np){ alert("PIN not changed."); return; } setAdminPin(np); alert("PIN updated."); };
+document.getElementById('saveBilling').onclick=()=>{ localStorage.setItem('omni_billing_info', billingInfo.value||''); alert('Saved.'); addAdminLog('Updated billing info'); };
 
+const partnersTable=document.querySelector('#partnersTable tbody');
+const leadsTable=document.querySelector('#leadsTable tbody');
+const dmSelect=document.getElementById('dmSelect');
 
+function renderPartners(){
+  partnersTable.innerHTML='';
+  loadPartners().forEach(p=>{
+    const left = p.subExpiry ? Math.ceil((p.subExpiry-Date.now())/86400000) : 0;
+    let subTxt = p.subExpiry && p.subExpiry>Date.now() ? (left+"d") : 'Expired';
+    if (left<=5 && left>0) subTxt += ' • ⚠️ 5-day leeway';
+    const tr=document.createElement('tr');
+    const bList=(p.badges&&p.badges.length?p.badges:computeBadges(p)).join(', ');
+    tr.innerHTML=`<td>${p.business}</td><td>${p.contact||''}</td><td>${p.phone||''}</td><td>${p.category}</td><td>${p.service}</td><td>${p.areas||''}</td><td>${p.muted?'🔇 Muted':'🔔 Active'}</td><td>${subTxt}</td><td>${formatLastActive(p.lastActive)}</td><td>${bList||'-'}</td>
+    <td class="tools">
+      <button class="btn" data-id="${p.id}" data-type="extend">Extend +30d</button>
+      <button class="btn" data-id="${p.id}" data-type="mute">${p.muted?'Unmute':'Mute'}</button>
+      <button class="btn danger" data-id="${p.id}" data-type="delP">Delete</button>
+    </td>`;
+    partnersTable.appendChild(tr);
+  });
+}
+function renderLeads(){
+  leadsTable.innerHTML='';
+  const js=jobs();
+  js.forEach(l=>{
+    const assigned=l.contractorPhone ? (loadPartners().find(p=>p.phone===l.contractorPhone)?.business||l.contractorPhone) : 'Personal Agent';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${l.id}</td><td>${l.customerName}</td><td>${l.customerPhone}</td><td>${l.area}</td><td>${l.category}</td><td>${l.service}</td><td>${l.notes||''}</td><td>${assigned}</td><td>${new Date(l.created).toLocaleString()}</td>
+    <td class="tools"><button class="btn" data-id="${l.id}" data-type="dm">DM Assigned</button><button class="btn danger" data-id="${l.id}" data-type="delL">Delete</button></td>`;
+    leadsTable.appendChild(tr);
+  });
+}
+function populateDMSelect(){ dmSelect.innerHTML=''; loadPartners().forEach(p=>{ const o=document.createElement('option'); o.value=p.phone; o.textContent=`${p.business} (${p.phone}) ${p.muted?'[Muted]':''}`; dmSelect.appendChild(o); }); }
+
+document.addEventListener('click',(e)=>{
+  const t=e.target;
+  if(t.matches('[data-type="delP"]')){ const id=t.getAttribute('data-id'); savePartners(loadPartners().filter(p=>p.id!==id)); renderPartners(); populateDMSelect(); addAdminLog('Deleted partner '+id); refreshAdminKPIs(); }
+  if(t.matches('[data-type="delL"]')){ const id=t.getAttribute('data-id'); saveJobs(jobs().filter(x=>x.id!==id)); renderLeads(); addAdminLog('Deleted job '+id); refreshAdminKPIs(); drawMiniChart(); }
+  if(t.matches('[data-type="mute"]')){ const id=t.getAttribute('data-id'); const list=loadPartners(); const p=list.find(x=>x.id===id); if(p){ p.muted=!p.muted; savePartners(list); renderPartners(); populateDMSelect(); addAdminLog((p.muted?'Muted ':'Unmuted ')+p.business); } }
+  if(t.matches('[data-type="extend"]')){ const id=t.getAttribute('data-id'); const list=loadPartners(); const p=list.find(x=>x.id===id); if(p){ p.subExpiry = Math.max(Date.now(), p.subExpiry||0) + 30*86400000; p.subStatus='Active'; savePartners(list); renderPartners(); addAdminLog('Extended subscription for '+p.business); } }
+});
+document.getElementById('sendDM').onclick=()=>{ const phone=dmSelect.value; const text=dmText.value.trim(); if(!phone||!text) return; const arr=msgsFor(phone); arr.push({from:'admin',text,when:new Date().toISOString()}); saveMsgsFor(phone,arr); dmText.value=''; dmOk.style.display='block'; setTimeout(()=>dmOk.style.display='none',1500); };
+document.getElementById('broadcastAll').onclick=()=>{ const text=prompt("Broadcast to all UNMUTED contractors:"); if(!text) return; loadPartners().filter(p=>!p.muted).forEach(p=>{ const arr=msgsFor(p.phone); arr.push({from:'admin',text,when:new Date().toISOString()}); saveMsgsFor(p.phone,arr); }); alert("Broadcast sent."); addAdminLog('Broadcast to all unmuted'); };
+document.getElementById('msgClients').onclick=()=>{ const text=prompt("Broadcast to all Clients:"); if(!text) return; const cl=loadClients(); cl.forEach(c=>{
