@@ -1,146 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Contractor Access | OmniSolutions</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Contractor Dashboard — OmniSolutions</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
-  --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
-  --good:#22d3a6; --bad:#ff5c7a; --shadow:0 14px 32px rgba(0,0,0,.35);
+  --bg:#f7fafc; --card:#ffffff; --ink:#0f172a; --muted:#5b6476;
+  --brand:#14b8a6; --brand2:#0ea5e9; --border:#e6eef3; --chip:#e6fffa; --danger:#ef4444;
+  --shadow:0 10px 26px rgba(2, 8, 23, .08);
 }
-*{box-sizing:border-box}
-body{
-  margin:0;font-family:Poppins,system-ui;background:var(--bg1);color:var(--ink);
-  display:flex;justify-content:center;align-items:center;min-height:100vh;
-}
-.card{
-  background:linear-gradient(180deg,#18152f,#0b0a18);
-  border:1px solid #ffffff14;border-radius:16px;box-shadow:var(--shadow);
-  width:320px;max-width:90vw;text-align:center;padding:26px 18px;
-}
-h2{margin-top:0;font-size:20px;font-weight:800;color:#fff}
-input{
-  width:100%;padding:10px;border:none;border-radius:10px;margin:6px 0;
-  background:#211d3b;color:#fff;font-size:15px;
-}
-.btn{
-  width:100%;padding:10px;border:none;border-radius:10px;margin-top:6px;
-  background:linear-gradient(135deg,var(--brand),var(--brand2));
-  font-weight:800;color:#0b0622;cursor:pointer;transition:.2s;
-}
-.btn:hover{opacity:.9;transform:translateY(-1px)}
-.small{color:var(--muted);font-size:14px;margin-top:10px;cursor:pointer}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:28px auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.center{display:grid;place-items:center;height:100dvh;padding:16px}
+h1,h2,h3{margin:0}
+.btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+.btn.secondary{background:#e7f5ff;color:#0369a1}
+.btn.ghost{background:#f1f5f9;color:#0f172a}
+.btn.danger{background:var(--danger)}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--ink);outline:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+.kpi{padding:16px;border:1px solid var(--border);border-radius:14px;background:#f9fbfd}
+.kpi b{font-size:28px}
+.badge{display:inline-flex;gap:8px;align-items:center;background:#ecfeff;border:1px solid #99f6e4;color:#0f766e;border-radius:999px;padding:6px 10px;font-weight:700}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.small{color:var(--muted);font-size:12px}
+.table{width:100%;border-collapse:separate;border-spacing:0 8px}
+.table th{font-size:12px;color:#6b7280;text-align:left}
+.table td{background:#fff;border:1px solid var(--border);padding:10px;border-radius:10px;vertical-align:top}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toast{position:fixed;right:18px;bottom:18px;min-width:260px;max-width:86vw;background:#0f172a;color:#fff;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:50}
+.toast.show{display:block;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(8px);opacity:.2}to{transform:translateY(0);opacity:1}}
+.banner{background:#fff0f0;border:1px solid #fecaca;color:#7f1d1d;padding:12px;border-radius:12px;margin:12px 0}
+.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tabbar .t{padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;font-weight:700}
+.tabbar .t.active{background:linear-gradient(135deg,#e6fffa,#eff6ff);border-color:#bae6fd}
 .hidden{display:none}
-.dashboard{
-  display:none;flex-direction:column;align-items:center;text-align:center;
-  max-width:600px;width:96vw;padding:18px;background:linear-gradient(180deg,#18152f,#0b0a18);
-  border:1px solid #ffffff14;border-radius:18px;box-shadow:var(--shadow);
-}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:10px;width:100%}
-.stat{background:#211d3b;padding:12px;border-radius:12px}
-.jobs{width:100%;margin-top:18px;text-align:left}
-.job{background:#1d1a3c;border:1px solid #ffffff14;border-radius:10px;padding:10px;margin-top:8px}
-.logout{margin-top:20px;background:#ff5c7a;color:#fff}
+.badgepill{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;padding:2px 8px;font-size:12px;color:#3730a3;margin-left:6px}
+.headerline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
-<div class="card" id="loginCard">
-  <h2>🧰 Contractor Access</h2>
-  <input id="phone" placeholder="Phone number">
-  <input id="password" placeholder="Password" type="password">
-  <button class="btn" id="loginBtn">Login</button>
-  <div class="small" id="signup">New Contractor? Sign Up</div>
-  <div class="small" id="forgot">Forgot Password?</div>
+<!-- LOGIN / SIGNUP -->
+<div id="authScreen" class="center">
+  <div class="card" style="max-width:480px;width:100%;padding:22px">
+    <h2 style="display:flex;align-items:center;gap:10px">🧰 Contractor Access</h2>
+    <div class="grid2" style="margin-top:14px">
+      <input id="loginPhone" placeholder="Phone (e.g. 0674099143)">
+      <input id="loginPass" type="password" placeholder="Password">
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="doLogin">Login</button>
+      <button class="btn ghost" id="showSignUp">New Contractor? Sign Up</button>
+      <button class="btn secondary" id="forgotBtn">Forgot Password?</button>
+    </div>
+
+    <!-- quick signup -->
+    <div id="signUpBox" class="hidden" style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
+      <h3>Quick Sign-Up</h3>
+      <div class="grid2" style="margin-top:8px">
+        <input id="suBiz" placeholder="Business / Contractor Name">
+        <input id="suOwner" placeholder="Contact Person">
+      </div>
+      <div class="grid2">
+        <input id="suPhone" placeholder="Phone">
+        <input id="suEmail" placeholder="Email (optional)">
+      </div>
+      <div class="grid2">
+        <select id="suCat"></select>
+        <input id="suAreas" placeholder="Areas (e.g., Sandton, Durban)">
+      </div>
+      <div class="grid2">
+        <input id="suSpecialty" placeholder="Specialty (e.g., Geysers, CCTV)">
+        <input id="suWebsite" placeholder="Website (optional)">
+      </div>
+      <div class="grid3">
+        <select id="suPlan"></select>
+        <input id="suPass" type="password" placeholder="Create password (min 6)">
+        <input id="suReferral" placeholder="Referral code (optional)">
+      </div>
+      <div class="grid2">
+        <input id="suBotToken" placeholder="(Optional) Your Telegram BOT TOKEN">
+        <input id="suChatId" placeholder="(Optional) Your Telegram CHAT ID">
+      </div>
+      <div class="small" style="margin-top:6px">Billing: <b>Pay OmniSolutions – FNB Acc 628900000 – Branch 250655 – Ref: Your Business Name</b></div>
+      <div style="margin-top:10px"><button class="btn" id="doSignUp">Create Account</button></div>
+    </div>
+  </div>
 </div>
 
-<div class="dashboard" id="dash">
-  <h2>Welcome, <span id="bizName"></span> 👋</h2>
-  <div id="planInfo"></div>
-  <div class="stat-grid">
-    <div class="stat"><b id="jobCount">0</b><br>Jobs Received</div>
-    <div class="stat"><b id="reviewCount">0</b><br>Reviews</div>
-    <div class="stat"><b id="rating">0</b><br>Avg Rating ⭐</div>
+<!-- DASHBOARD -->
+<div id="dash" class="wrap hidden">
+  <div class="top" style="margin-bottom:10px">
+    <div class="headerline">
+      <h1 id="dBiz">—</h1>
+      <span class="badge" id="dPlan">Plan —</span>
+    </div>
+    <button class="btn danger" id="btnLogout">Logout</button>
   </div>
 
-  <div class="jobs" id="jobList"></div>
+  <div id="suspendBar" class="banner hidden">⚠️ Your account is <b>suspended</b> or <b>expired</b>. You can read messages, but actions are disabled. Please renew to unlock leads.</div>
 
-  <button class="btn logout" id="logout">Logout</button>
+  <div class="card" style="padding:16px">
+    <div class="small" id="dSubInfo">—</div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="kpi"><div class="small">Jobs Received</div><b id="kpiJobs">0</b></div>
+      <div class="kpi"><div class="small">Total Earnings (R)</div><b id="kpiEarn">0</b></div>
+      <div class="kpi"><div class="small">Avg Rating ⭐</div><b id="kpiRate">—</b></div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="t active" data-t="leads">Leads & Earnings</div>
+    <div class="t" data-t="messages">Messages from Admin</div>
+    <div class="t" data-t="analytics">Analytics</div>
+    <div class="t" data-t="settings">Settings</div>
+  </div>
+
+  <!-- LEADS -->
+  <section id="tab-leads" class="card" style="padding:16px">
+    <div class="small" style="margin-bottom:8px">Update price (total you charged) and mark job status. This builds your earnings analytics.</div>
+    <table class="table" id="jobsTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Created</th><th>Client</th><th>Service</th><th>Area</th><th>Notes</th><th style="width:120px">Price (R)</th><th style="width:150px">Status</th><th style="width:120px">Save</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- MESSAGES -->
+  <section id="tab-messages" class="card hidden" style="padding:16px">
+    <div class="small">Real-time messages sent by admin. New ones show a popup.</div>
+    <div id="msgList" style="margin-top:10px;display:grid;gap:8px"></div>
+  </section>
+
+  <!-- ANALYTICS -->
+  <section id="tab-analytics" class="card hidden" style="padding:16px">
+    <div class="grid2">
+      <div>
+        <h3>Earnings (last 6 months)</h3>
+        <canvas id="earnChart" height="140"></canvas>
+      </div>
+      <div>
+        <h3>Lead stats</h3>
+        <div class="kpi" style="margin-top:8px"><div class="small">Completed vs Pending</div><b id="kpiComp">0 / 0</b></div>
+        <div class="kpi" style="margin-top:8px"><div class="small">Top Area</div><b id="kpiArea">—</b></div>
+        <div class="kpi" style="margin-top:8px"><div class="small">Top Service</div><b id="kpiSvc">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="tab-settings" class="card hidden" style="padding:16px">
+    <div class="grid2">
+      <div>
+        <h3>Billing & Plan</h3>
+        <div class="small" id="billInfo" style="margin:6px 0 12px"></div>
+        <button class="btn" id="renewBtn">Renew +30 days</button>
+        <button class="btn ghost" id="autoRenewToggle">Auto-renew: OFF</button>
+      </div>
+      <div>
+        <h3>Telegram Alerts</h3>
+        <div class="grid2" style="margin-top:8px">
+          <input id="botToken" placeholder="Your BOT TOKEN">
+          <input id="chatId" placeholder="Your CHAT ID">
+        </div>
+        <div style="margin-top:8px"><button class="btn" id="saveTG">Save Telegram</button></div>
+        <div class="small" style="margin-top:6px">We’ll use *your* bot to notify you on new jobs.</div>
+      </div>
+    </div>
+  </section>
 </div>
 
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
 <script>
-const phone=document.getElementById('phone');
-const pass=document.getElementById('password');
-const loginBtn=document.getElementById('loginBtn');
-const signup=document.getElementById('signup');
-const forgot=document.getElementById('forgot');
-const dash=document.getElementById('dash');
-const card=document.getElementById('loginCard');
+/* =============== shared helpers =============== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const F={load:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}},save:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+const KEYS={partners:'omni_partners', jobs:'omni_jobs', reviews:'omni_reviews'};
+function me(){const phone=localStorage.getItem('contractor_phone'); return F.load(KEYS.partners,[]).find(p=>p.phone===phone)||null;}
+function saveMe(rec){const list=F.load(KEYS.partners,[]); const i=list.findIndex(x=>x.phone===rec.phone); if(i>-1){list[i]=rec; F.save(KEYS.partners,list);} }
+function jobsForMe(){const phone=localStorage.getItem('contractor_phone'); return F.load(KEYS.jobs,[]).filter(j=>j.contractorPhone===phone);}
+function updateJob(rec){const list=F.load(KEYS.jobs,[]); const i=list.findIndex(x=>x.id===rec.id); if(i>-1){list[i]=rec; F.save(KEYS.jobs,list);} }
+function reviewsForMe(){const phone=localStorage.getItem('contractor_phone'); return F.load(KEYS.reviews,[]).filter(r=>r.contractorPhone===phone);}
+function avgRating(){const rs=reviewsForMe(); if(!rs.length) return '—'; const a=rs.reduce((x,y)=>x+y.stars,0)/rs.length; return a.toFixed(1); }
+function showToast(msg){const t=$("#toast"); t.innerHTML=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3800);}
 
-function load(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}}
-function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+/* =============== categories + plans for signup =============== */
+const CATEGORY_MAP={
+  "Property & Maintenance":["Plumbing","Electrical","Roofing","Carpentry","Painting","Handyman","HVAC","Geysers","Leak Detection"],
+  "Security, Energy & Tech":["CCTV Installation","Alarm Systems","Access Control","Solar Installation","Gate Motors","Networking & Wi-Fi"],
+  "Business & Professional":["Real Estate Agent","IT Support","Web Design","Branding/Printing"]
+};
+const DEFAULT_PLANS=[
+  {id:'monthly_basic',name:'Monthly Basic',price:100,nextPrice:299,cycle:'monthly',desc:'R100 first month → R299/m'},
+  {id:'six_month',name:'6 Months',price:1599,cycle:'6mo',desc:'Prepay 6 months'},
+  {id:'yearly',name:'Yearly',price:2999,cycle:'yearly',desc:'Save vs monthly'}
+];
+if(!localStorage.getItem('omni_subscriptions')) F.save('omni_subscriptions', DEFAULT_PLANS);
 
-let partners=load('omni_partners',[]);
-let jobs=load('omni_jobs',[]);
-let reviews=load('omni_reviews',[]);
-
-function login(){
-  const ph=phone.value.trim();
-  const pw=pass.value.trim();
-  const p=partners.find(x=>x.phone===ph && x.pass===pw);
-  if(!p){alert('Invalid login');return;}
-  localStorage.setItem('omni_logged_contractor',ph);
-  openDashboard(p);
-}
-
-function openDashboard(p){
-  card.style.display='none';
-  dash.style.display='flex';
-  document.getElementById('bizName').textContent=p.business;
-  document.getElementById('planInfo').innerHTML=`<small>${p.category} → ${p.service}</small><br>
-    <small>Plan: ${p.subPlan||'None'} | Status: ${p.subStatus||'Active'}</small><br>
-    <small>Next Billing: ${p.subNextBilling?new Date(p.subNextBilling).toLocaleDateString():'n/a'}</small>`;
-  
-  // count jobs
-  const myJobs=jobs.filter(j=>j.contractorPhone===p.phone);
-  document.getElementById('jobCount').textContent=myJobs.length;
-  const myReviews=reviews.filter(r=>r.contractorPhone===p.phone);
-  document.getElementById('reviewCount').textContent=myReviews.length;
-  const avg=myReviews.length?(myReviews.reduce((a,b)=>a+b.stars,0)/myReviews.length).toFixed(1):0;
-  document.getElementById('rating').textContent=avg;
-
-  const list=document.getElementById('jobList');
-  list.innerHTML='<h3>Your Leads</h3>';
-  myJobs.slice().reverse().forEach(j=>{
-    list.innerHTML+=`<div class="job"><b>${j.service}</b><br>
-    ${j.customerName} • ${j.customerPhone}<br>
-    ${j.area}<br><small>${new Date(j.created).toLocaleString()}</small><br>
-    Notes: ${j.notes}</div>`;
+/* =============== AUTH SCREENS =============== */
+function fillSignUpSelectors(){
+  const catSel=$("#suCat"); catSel.innerHTML='';
+  Object.entries(CATEGORY_MAP).forEach(([cat,services])=>{
+    const og=document.createElement('optgroup'); og.label=cat;
+    services.forEach(s=>{const o=document.createElement('option'); o.value=`${cat}::${s}`; o.textContent=`${cat} → ${s}`; og.appendChild(o);});
+    catSel.appendChild(og);
+  });
+  const planSel=$("#suPlan"); planSel.innerHTML='';
+  F.load('omni_subscriptions',DEFAULT_PLANS).forEach(p=>{
+    const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.name} — R${p.price}${p.nextPrice?` → R${p.nextPrice}/m`:''}`; planSel.appendChild(o);
   });
 }
+$("#showSignUp").onclick=()=>{ $("#signUpBox").classList.toggle('hidden'); fillSignUpSelectors(); };
+$("#forgotBtn").onclick=()=>alert("Ask admin to reset your password in Partners table.");
 
-loginBtn.onclick=login;
-signup.onclick=()=>{window.location.href='index.html#cBackdrop'};
-forgot.onclick=()=>{
-  const ph=prompt('Enter your phone number to view your password:');
-  const p=partners.find(x=>x.phone===ph);
-  if(p) alert(`Your password: ${p.pass}`);
-  else alert('Not found.');
+$("#doLogin").onclick=()=>{
+  const phone=$("#loginPhone").value.replace(/\D/g,''); const pass=$("#loginPass").value;
+  const p=F.load(KEYS.partners,[]).find(x=>x.phone===phone);
+  if(!p) return alert("Not found. Use Sign Up.");
+  if((p.pass||'')!==pass) return alert("Wrong password.");
+  localStorage.setItem('contractor_phone', phone);
+  openDash();
 };
-document.getElementById('logout').onclick=()=>{
-  localStorage.removeItem('omni_logged_contractor');
-  location.reload();
+$("#doSignUp").onclick=()=>{
+  const name=$("#suBiz").value.trim(), owner=$("#suOwner").value.trim(), phone=$("#suPhone").value.replace(/\D/g,'');
+  const svcSel=$("#suCat").value, areas=$("#suAreas").value.trim(), spec=$("#suSpecialty").value.trim(), web=$("#suWebsite").value.trim();
+  const planId=$("#suPlan").value, email=$("#suEmail").value.trim(), pass=$("#suPass").value.trim(), ref=$("#suReferral").value.trim();
+  const bot=$("#suBotToken").value.trim(), chat=$("#suChatId").value.trim();
+  if(!name||!phone||!svcSel||pass.length<6) return alert("Fill name, phone, category and 6+ char password.");
+  const [category,service]=svcSel.split("::");
+  const list=F.load(KEYS.partners,[]); if(list.find(x=>x.phone===phone)) return alert("Phone already registered.");
+  const now=Date.now(); const plans=F.load('omni_subscriptions',DEFAULT_PLANS); const plan=plans.find(p=>p.id===planId)||plans[0];
+  const next=new Date(now + (plan.cycle==='yearly'?365:(plan.cycle==='6mo'?182:30))*86400000).toISOString();
+  list.push({id:'p_'+now,business:name,contact:owner,email,phone,category,service,areas,specialty:spec,website:web,ref,created:new Date().toISOString(),
+             pass,muted:false,badges:[],lastActive:Date.now(),
+             subPlan:plan.id,subStart:new Date(now).toISOString(),subNextBilling:next,subStatus:'Active',
+             tgToken:bot||'', tgChat:chat||'', autoRenew:false, suspended:false});
+  F.save(KEYS.partners,list);
+  alert("Account created. You can log in now.");
 };
 
-// Auto login
-const logged=localStorage.getItem('omni_logged_contractor');
-if(logged){
-  const p=partners.find(x=>x.phone===logged);
-  if(p) openDashboard(p);
+/* =============== DASHBOARD RENDER =============== */
+let earnChart=null;
+function openDash(){
+  $("#authScreen").classList.add('hidden');
+  $("#dash").classList.remove('hidden');
+  renderAll();
+  listenMessages();
 }
+$("#btnLogout").onclick=()=>{ localStorage.removeItem('contractor_phone'); location.reload(); };
+
+function renderAll(){
+  const p=me(); if(!p){ $("#dash").classList.add('hidden'); $("#authScreen").classList.remove('hidden'); return; }
+  // header
+  $("#dBiz").textContent = p.business || '—';
+  $("#dPlan").textContent = (p.subPlan||'—') + (p.suspended?' — SUSPENDED':'');
+  const left = p.subNextBilling? Math.ceil((new Date(p.subNextBilling).getTime()-Date.now())/86400000) : 0;
+  $("#dSubInfo").innerHTML = `Plan: <b>${p.subPlan||'—'}</b> • Status: <b>${p.subStatus||'Active'}</b> • Next Billing: <b>${p.subNextBilling?new Date(p.subNextBilling).toLocaleDateString():'—'}</b> (${left>=0?left+' days left':'expired'})`;
+  $("#billInfo").innerHTML = localStorage.getItem('omni_billing_info') || 'Pay OmniSolutions – FNB Acc 628900000 – Branch 250655 – Ref: Your Business Name';
+
+  // suspension gate
+  const expired = p.subStatus==='Expired' || (p.subNextBilling && (new Date(p.subNextBilling).getTime() < Date.now()-5*86400000));
+  const suspended = p.suspended || expired;
+  $("#suspendBar").classList.toggle('hidden', !suspended);
+
+  // KPIs
+  const myJobs = jobsForMe();
+  const completed = myJobs.filter(j=>j.status==='Completed');
+  const totalEarn = completed.reduce((a,b)=> a + (Number(b.price)||0), 0);
+  $("#kpiJobs").textContent = myJobs.length;
+  $("#kpiEarn").textContent = totalEarn.toLocaleString();
+  $("#kpiRate").textContent = avgRating();
+
+  // table
+  const tb=$("#jobsTable tbody"); tb.innerHTML='';
+  myJobs.sort((a,b)=> new Date(b.created)-new Date(a.created)).forEach(j=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td>${j.id}</td>
+      <td>${new Date(j.created).toLocaleString()}</td>
+      <td>${j.customerName||''}<div class="small">${j.customerPhone||''}</div></td>
+      <td>${j.service||''}<span class="badgepill">${(j.category||'').split(' ')[0]}</span></td>
+      <td>${j.area||''}</td>
+      <td class="small">${(j.notes||'').slice(0,120)}</td>
+      <td><input type="number" min="0" step="1" value="${j.price??''}" data-id="${j.id}" data-f="price" ${suspended?'disabled':''}></td>
+      <td>
+        <select data-id="${j.id}" data-f="status" ${suspended?'disabled':''}>
+          ${['Pending','In Progress','Completed','Cancelled'].map(s=>`<option ${j.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td><button class="btn" data-id="${j.id}" data-f="save" ${suspended?'disabled':''}>Save</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  // analytics
+  const byMonth = Array.from({length:6},(_,i)=>{const d=new Date(); d.setMonth(d.getMonth()- (5-i)); return {ym:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, label:d.toLocaleString('default',{month:'short'})};});
+  const map={}; byMonth.forEach(m=>map[m.ym]=0);
+  completed.forEach(j=>{
+    const d=new Date(j.created); const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if(map[ym]!=null) map[ym]+= Number(j.price)||0;
+  });
+  const labels = byMonth.map(m=>m.label);
+  const data = byMonth.map(m=> map[m.ym]);
+  const ctx=$("#earnChart");
+  if(earnChart) earnChart.destroy();
+  earnChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Earnings (R)',data,tension:.35,fill:false}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+  $("#kpiComp").textContent = `${completed.length} / ${myJobs.filter(j=>j.status==='Pending' || j.status==='In Progress').length}`;
+  const areaCount={}; const svcCount={};
+  myJobs.forEach(j=>{ areaCount[j.area]=(areaCount[j.area]||0)+1; svcCount[j.service]=(svcCount[j.service]||0)+1; });
+  $("#kpiArea").textContent = Object.entries(areaCount).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—';
+  $("#kpiSvc").textContent  = Object.entries(svcCount ).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—';
+
+  // settings fields
+  $("#botToken").value = p.tgToken||'';
+  $("#chatId").value = p.tgChat||'';
+  $("#autoRenewToggle").textContent = `Auto-renew: ${p.autoRenew?'ON':'OFF'}`;
+}
+$("#jobsTable").addEventListener('click', (e)=>{
+  const b=e.target.closest('button[data-f="save"]'); if(!b) return;
+  const id=b.getAttribute('data-id');
+  const row=b.closest('tr');
+  const price=Number(row.querySelector('input[data-f="price"]').value)||0;
+  const status=row.querySelector('select[data-f="status"]').value;
+  const list=jobsForMe(); const j=list.find(x=>x.id===id); if(!j) return;
+  j.price=price; j.status=status; updateJob(j);
+  showToast("Saved ✓"); renderAll();
+});
+$("#jobsTable").addEventListener('change',(e)=>{
+  const inp=e.target.closest('input[data-f="price"],select[data-f="status"]'); if(!inp) return; // live edit OK but save still needed
+});
+
+$$('.tabbar .t').forEach(t=>{
+  t.onclick=()=>{
+    $$('.tabbar .t').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const name=t.getAttribute('data-t');
+    ['leads','messages','analytics','settings'].forEach(n=> $('#tab-'+n).classList.toggle('hidden', n!==name));
+    if(name==='messages'){ drawMessages(); }
+  };
+});
+
+/* =============== messages: toast + inbox =============== */
+let msgPoll=null;
+function listenMessages(){
+  clearInterval(msgPoll);
+  drawMessages(); // initial
+  msgPoll=setInterval(checkNewMessages, 5000);
+}
+function keyMsgs(){ const phone=localStorage.getItem('contractor_phone'); return 'omni_msgs_'+phone; }
+function drawMessages(){
+  const arr=F.load(keyMsgs(),[]);
+  const box=$("#msgList"); box.innerHTML='';
+  if(!arr.length){ box.innerHTML='<div class="small">No messages yet.</div>'; return; }
+  arr.sort((a,b)=> new Date(b.when)-new Date(a.when)).forEach(m=>{
+    const d=document.createElement('div'); d.className='card'; d.style.padding='12px';
+    d.innerHTML=`<div><b>${m.from||'Admin'}</b> • <span class="small">${new Date(m.when).toLocaleString()}</span></div><div style="margin-top:4px">${m.text}</div>`;
+    box.appendChild(d);
+  });
+}
+function checkNewMessages(){
+  const phone=localStorage.getItem('contractor_phone'); if(!phone) return;
+  const key=keyMsgs(); const arr=F.load(key,[]);
+  const seenKey = 'omni_seen_'+phone; const lastSeen = F.load(seenKey, null);
+  const latest = arr.length? arr[arr.length-1].when : null;
+  if(latest && latest!==lastSeen){
+    showToast("🔔 New message from admin");
+    F.save(seenKey, latest);
+    drawMessages();
+  }
+}
+
+/* =============== settings actions =============== */
+$("#saveTG").onclick=()=>{
+  const p=me(); if(!p) return;
+  p.tgToken=$("#botToken").value.trim(); p.tgChat=$("#chatId").value.trim();
+  saveMe(p); showToast("Telegram saved ✓");
+};
+$("#renewBtn").onclick=()=>{
+  const p=me(); if(!p) return;
+  const next = new Date(Math.max(Date.now(), new Date(p.subNextBilling||Date.now()).getTime()) + 30*86400000);
+  p.subNextBilling = next.toISOString();
+  p.subStatus='Active'; p.suspended=false;
+  saveMe(p); renderAll(); showToast("Extended +30 days ✓");
+};
+$("#autoRenewToggle").onclick=()=>{
+  const p=me(); if(!p) return; p.autoRenew=!p.autoRenew; saveMe(p);
+  $("#autoRenewToggle").textContent = `Auto-renew: ${p.autoRenew?'ON':'OFF'}`; showToast("Setting updated ✓");
+};
+
+/* =============== tab default and boot =============== */
+(function boot(){
+  // if already logged in open dashboard
+  if(localStorage.getItem('contractor_phone')) openDash();
+})();
 </script>
 </body>
 </html>
