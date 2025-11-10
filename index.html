@@ -458,5 +458,18 @@ document.getElementById('trackBtn').onclick=()=>tBackdrop.style.display='grid';
 
 <!-- Single merged master script -->
 <script src="addons_master.js"></script>
+  <script>
+/* Admin PIN Login */
+document.getElementById("openAdmin").onclick=()=>{
+  let pin=prompt("Enter Admin PIN:");
+  if(!pin)return;
+  const saved=localStorage.getItem("omni_admin_pin")||"4321";
+  if(pin===saved){
+    document.getElementById("aBackdrop").style.display="grid";
+  }else alert("❌ Incorrect PIN");
+};
+document.getElementById("aClose").onclick=()=>document.getElementById("aBackdrop").style.display="none";
+</script>
 </body>
 </html>
+
