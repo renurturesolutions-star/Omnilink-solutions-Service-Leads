@@ -254,6 +254,7 @@ function renderBillingBanner(){ const me=partners().find(x=>ME && x.phone===ME.p
 /* ====== Online status (stamp on exit) ====== */
 window.addEventListener("beforeunload",()=>{ if(!ME) return; const list=partners(); const rec=list.find(x=>x.phone===ME.phone); if(rec){ rec.lastActive=Date.now(); savePartners(list); } });
 
-</script>
+<script src="addons.js"></script>
+<script src="subscription_addon.js"></script>
 </body>
 </html>
