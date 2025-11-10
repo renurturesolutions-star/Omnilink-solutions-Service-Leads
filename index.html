@@ -1,148 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OmniSolutions — All-in-One Service Network</title>
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OmniSolutions — All-in-One Service Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
 <style>
-body {
-  margin:0; font-family:Poppins,system-ui;
-  background:#0b0a18; color:#fff; text-align:center;
+:root{
+  --bg1:#0b0a18; --bg2:#141229; --ink:#f6f7fb; --muted:#c6c9de;
+  --brand:#8a5cff; --brand2:#6a4cff; --chip:#262248; --chip2:#1e1a3b;
+  --good:#22d3a6; --bad:#ff5c7a; --shadow:0 14px 32px rgba(0,0,0,.35);
 }
-header {padding:20px;}
-.hero h1 {font-weight:700;}
-.btn {
-  background:#3b36ff; color:#fff; border:none;
-  padding:10px 20px; border-radius:8px; cursor:pointer;
-  transition:0.3s; font-weight:600;
-}
-.btn:hover {background:#2926b5;}
-.service-grid {
-  display:flex; flex-wrap:wrap; justify-content:center;
-  gap:12px; margin:20px auto; max-width:900px;
-}
-.bubble {
-  background:#1f1d3e; border-radius:30px; padding:12px 20px;
-  cursor:pointer; transition:.3s;
-}
-.bubble:hover {background:#3b36ff;}
-.modal {
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:#000000bb; display:none;
-  justify-content:center; align-items:center;
-  z-index:99;
-}
-.modal.active {display:flex;}
-.modal-content {
-  background:#161532; padding:30px; border-radius:12px;
-  width:90%; max-width:600px; text-align:left; color:#fff;
-  box-shadow:0 0 20px #0006;
-}
-.modal-content input, .modal-content select {
-  width:100%; margin-bottom:10px; padding:10px;
-  border-radius:6px; border:none; background:#211f44; color:#fff;
-}
-.modal-header {display:flex; justify-content:space-between; align-items:center;}
-.closeBtn {
-  background:#3b36ff; color:#fff; border:none; border-radius:8px;
-  padding:6px 12px; cursor:pointer;
-}
-footer {padding:20px; font-size:12px; color:#777;}
+*{box-sizing:border-box} body{margin:0;font-family:Poppins,system-ui;color:var(--ink);
+background:radial-gradient(1200px 800px at 10% -10%, #1a1740, #0b0a18 50%, #090818 100%);overflow-x:hidden}
+h1{margin:0;font-size:clamp(22px,3.5vw,40px)} a{color:inherit}
+.badge{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));font-weight:900;color:#0a061b;box-shadow:0 10px 26px #8a5cff55;margin:auto}
+.sub{color:var(--muted);margin-top:6px;font-size:15px}
+.hero{width:min(1200px,94vw);margin:30px auto 10px;position:relative;text-align:center}
+.cta-bar{width:min(1200px,94vw);margin:10px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#0b0622;border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
+.btn.secondary{background:#231f41;color:#fff}.btn.danger{background:#ff5c7a;color:#fff}.btn:hover{opacity:.92}
+.top-right{position:absolute;top:10px;right:12px;display:flex;gap:8px}
+.chip{background:var(--chip);border:1px solid #ffffff14;padding:8px 10px;border-radius:999px;color:#e8e9ff}
+.section{width:min(1200px,94vw);margin:28px auto}
+.section h2{margin:14px 0 10px;font-size:22px}
+.group{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid #ffffff18;border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:14px}
+.group-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.group-title{font-weight:800}.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
+.bubble{background:#231f41;color:#fff;padding:12px;border-radius:999px;text-align:center;font-weight:700;cursor:pointer;border:1px solid #ffffff14}
+.bubble:hover{background:linear-gradient(135deg,var(--brand),var(--brand2));transform:translateY(-2px)}
+.hidden{display:none}
+.testimonials{margin-top:28px;text-align:center}
+.t-card{display:inline-block;background:#231f41;border:1px solid #ffffff14;padding:18px;border-radius:16px;max-width:720px;box-shadow:var(--shadow)}
+.stars{color:#ffd166;margin:6px 0}
+.live{margin-top:12px;text-align:center;color:#bfc3e0}
+.bottom-actions{margin:22px auto 60px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.footer{color:#aab0cf;text-align:center;margin:36px 0 60px}
+.small{font-size:12px;color:#cbd0ef}
 </style>
 </head>
 <body>
+<canvas id="confetti"></canvas>
 
-<header class="hero">
-  <h1>OmniSolutions</h1>
-  <p>All-in-One Service Network</p>
-  <button id="openSignup" class="btn">📋 Join as Contractor</button>
-</header>
-
-<main id="catalog">
-  <h2>Choose a category</h2>
-  <div class="service-grid">
-    <div class="bubble">Plumbing</div>
-    <div class="bubble">Electrical</div>
-    <div class="bubble">Roofing</div>
-    <div class="bubble">Solar</div>
-    <div class="bubble">Landscaping</div>
-    <div class="bubble">CCTV</div>
-    <div class="bubble">Tiling</div>
+<section class="hero">
+  <div class="top-right">
+    <button class="btn secondary" id="openContractor">🧰 Join as Contractor</button>
   </div>
-</main>
+  <div class="badge">OS</div>
+  <h1>OmniSolutions — All-in-One Service Network</h1>
+  <p class="sub">From repairs to renovations, from sales to support — every solution under one roof.</p>
+</section>
 
-<footer>
-  © 2025 OmniSolutions | <a href="contractor.html" style="color:#7d7cff">Contractor Dashboard</a>
-</footer>
+<section class="section testimonials">
+  <div class="t-card">
+    <div>“Booked a plumber and had someone at my door in 45 minutes. Pricing was fair and super clean work.”</div>
+    <div class="stars">★★★★★</div>
+    <div style="color:#cfd6ff">— Nomsa M., Durban</div>
+  </div>
+  <div class="bottom-actions">
+    <a class="btn secondary" href="contractor.html">📊 Contractor Dashboard</a>
+  </div>
+</section>
 
-<!-- ===== Modal for Contractor Sign-Up ===== -->
-<div class="modal" id="signupModal">
-  <div class="modal-content">
-    <div class="modal-header">
+<!-- Contractor Modal -->
+<div class="modal-backdrop" id="cBackdrop" style="display:none;position:fixed;inset:0;background:#0009;place-items:center;z-index:100;">
+  <div class="modal" style="background:#151230;border:1px solid #ffffff20;border-radius:18px;padding:16px;max-width:600px;width:90%;color:#fff;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
       <h3>🧰 New Partner Sign-Up</h3>
-      <button id="closeModal" class="closeBtn">Close</button>
+      <button class="btn" id="cClose">Close</button>
     </div>
-    <p class="small">Join the OmniSolutions network — we route paying jobs to you.</p>
-    <input placeholder="Business Name">
-    <input placeholder="Contact Person">
-    <input placeholder="Email">
-    <input placeholder="Phone Number">
-    <select>
-      <option value="">Select Category</option>
-      <option>Property & Maintenance</option>
-      <option>Electrical</option>
-      <option>Cleaning</option>
-      <option>Security</option>
-    </select>
-    <input placeholder="Service (e.g. Plumbing)">
-    <input placeholder="Areas (comma separated)">
-    <input placeholder="Website">
-    <input type="password" placeholder="Create Password / PIN (4–6 digits)">
-    <button id="signupSubmit" class="btn">Submit</button>
+    <input id="bizName" placeholder="Business Name" />
+    <input id="ownerName" placeholder="Contact Person" />
+    <input id="bizPhone" placeholder="Phone Number" />
+    <input id="bizPass" type="password" placeholder="Create PIN (4–6 digits)" />
+    <input id="bizCategory" placeholder="Category (e.g. Plumbing)" />
+    <input id="bizArea" placeholder="Areas (comma separated)" />
+    <button class="btn" id="conSubmit">Submit</button>
+    <div id="conOk" style="display:none;margin-top:10px;color:#22d3a6;font-weight:600;">✅ Submitted! Redirecting…</div>
   </div>
 </div>
 
 <script>
-/* ======== Modal open / close ======== */
-const modal=document.getElementById("signupModal");
-document.getElementById("openSignup").onclick=()=>modal.classList.add("active");
-document.getElementById("closeModal").onclick=()=>modal.classList.remove("active");
-
-/* ======== Sign-Up Submit Logic ======== */
-document.getElementById("signupSubmit").onclick=function(){
-  const fields=modal.querySelectorAll("input, select");
-  const vals={};
-  fields.forEach(f=>vals[f.placeholder?.toLowerCase()||f.name]=f.value.trim());
-  const {businessname,contactperson,email,phonenumber,category,service,areas,website,["create password / pin (4–6 digits)"]:pass}=vals;
-
-  if(!businessname||!contactperson||!phonenumber||!pass){
-    alert("Please fill in Business, Contact, Phone, and Password fields.");return;
-  }
-
-  const key="omni_partners";
-  const ls={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},
-            set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-  const partners=ls.get(key,[]);
-  if(partners.find(p=>p.phone===phonenumber)){alert("That phone number is already registered.");return;}
-
-  partners.push({
-    id:"p_"+Date.now(),
-    business:businessname,owner:contactperson,email,phone:phonenumber,
-    category,service,areas,website,pass,
-    created:new Date().toISOString(),
-    active:true,subStatus:"Active",badges:[]
-  });
+document.getElementById("openContractor").onclick=()=>{document.getElementById("cBackdrop").style.display='grid';};
+document.getElementById("cClose").onclick=()=>{document.getElementById("cBackdrop").style.display='none';};
+document.getElementById("conSubmit").onclick=()=>{
+  const name=bizName.value.trim(),contact=ownerName.value.trim(),phone=bizPhone.value.trim(),pin=bizPass.value.trim(),cat=bizCategory.value.trim(),areas=bizArea.value.trim();
+  if(!name||!phone||!pin){alert("Please fill Business, Phone and PIN.");return;}
+  const key="omni_partners";const ls={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+  const partners=ls.get(key,[]);if(partners.find(p=>p.phone===phone)){alert("Phone already exists.");return;}
+  const now=Date.now();partners.push({id:'p_'+now,business:name,contact,phone,pass:pin,category:cat,areas,subStart:now,subExpiry:now+30*86400000});
   ls.set(key,partners);
-
-  alert("✅ Contractor registered successfully! Redirecting to your dashboard...");
-  modal.classList.remove("active");
-  setTimeout(()=>window.location.href="contractor.html",1200);
+  conOk.style.display='block';
+  setTimeout(()=>{window.location.href="contractor.html";},1200);
 };
 </script>
-
-<!-- Addons always last -->
 <script src="addons.js"></script>
 <script src="subscription_addon.js"></script>
 </body>
