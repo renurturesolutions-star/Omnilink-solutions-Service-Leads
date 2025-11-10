@@ -1,0 +1,9 @@
+{
+  "name": "OmniSolutions",
+  "short_name": "Omni",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0b0a18",
+  "theme_color": "#8a5cff",
+  "icons": []
+}
