@@ -39,78 +39,134 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);bor
 .toast{position:fixed;right:18px;bottom:18px;min-width:260px;max-width:86vw;background:#0f172a;color:#fff;border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:50}
 .toast.show{display:block;animation:pop .18s ease}
 @keyframes pop{from{transform:translateY(8px);opacity:.2}to{transform:translateY(0);opacity:1}}
-.banner{background:#fff0f0;border:1px solid #fecaca;color:#7f1d1d;padding:12px;border-radius:12px;margin:12px 0}
-.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.tabbar .t{padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;font-weight:700}
-.tabbar .t.active{background:linear-gradient(135deg,#e6fffa,#eff6ff);border-color:#bae6fd}
-.hidden{display:none}
-.badgepill{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;border-radius:999px;padding:2px 8px;font-size:12px;color:#3730a3;margin-left:6px}
-.headerline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
-<!-- LOGIN / SIGNUP -->
 <div id="authScreen" class="center">
-  <!-- (your login/signup form exactly the same) -->
+  <div class="card" style="padding:24px;max-width:420px;width:100%;text-align:center">
+    <h2>🔐 Contractor Login</h2>
+    <input id="loginPhone" placeholder="Phone Number" style="margin:8px 0">
+    <input id="loginPass" type="password" placeholder="Password" style="margin:8px 0">
+    <button id="loginBtn" class="btn">Login</button>
+    <p class="small" style="margin-top:10px">Forgot password? Contact admin.</p>
+  </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dash" class="wrap hidden">
-  <!-- all dashboard content same -->
-  <section id="tab-settings" class="card hidden" style="padding:16px">
+  <div class="top"><h2>📊 Dashboard</h2><button id="logoutBtn" class="btn ghost">Logout</button></div>
+
+  <div class="grid3" style="margin:20px 0">
+    <div class="kpi"><b id="kpiLeads">0</b><br><span class="small">Total Leads</span></div>
+    <div class="kpi"><b id="kpiProfit">R0</b><br><span class="small">Total Profit</span></div>
+    <div class="kpi"><b id="kpiRating">0★</b><br><span class="small">Avg Rating</span></div>
+  </div>
+
+  <canvas id="progressChart" height="100"></canvas>
+
+  <section class="card" style="padding:16px;margin-top:20px">
+    <h3>💬 Admin Messages</h3>
+    <div id="msgBox" style="max-height:200px;overflow:auto;margin-top:6px;border:1px solid var(--border);padding:10px;border-radius:12px;background:#fff"></div>
+  </section>
+
+  <section class="card" style="padding:16px;margin-top:20px">
+    <h3>🧾 Job Log</h3>
+    <table class="table" id="jobTable"><thead><tr><th>ID</th><th>Client</th><th>Phone</th><th>Area</th><th>Service</th><th>Price</th><th>Status</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section class="card" style="padding:16px;margin-top:20px">
+    <h3>⚙️ Settings</h3>
     <div class="grid2">
       <div>
-        <h3>Billing & Plan</h3>
-        <div class="small" id="billInfo" style="margin:6px 0 12px"></div>
-        <button class="btn" id="renewBtn">Renew +30 days</button>
-        <button class="btn ghost" id="autoRenewToggle">Auto-renew: OFF</button>
+        <h4>Billing Info</h4>
+        <p class="small" id="billNote"></p>
       </div>
       <div>
-        <h3>Telegram Alerts</h3>
-        <div class="grid2" style="margin-top:8px">
-          <input id="botToken" placeholder="Your BOT TOKEN">
-          <input id="chatId" placeholder="Your CHAT ID">
+        <h4>Telegram Alerts</h4>
+        <input id="botToken" placeholder="Your BOT TOKEN" />
+        <input id="chatId" placeholder="Your CHAT ID" style="margin-top:6px" />
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="saveTG">Save Telegram</button>
+          <button class="btn secondary" id="testTG">Test Telegram Message</button>
         </div>
-        <div style="margin-top:8px"><button class="btn" id="saveTG">Save Telegram</button></div>
-        <div class="small" style="margin-top:6px">We’ll use *your* bot to notify you on new jobs.</div>
+        <p class="small" style="margin-top:6px">💡 You can create a bot using @BotFather on Telegram.</p>
       </div>
     </div>
   </section>
 </div>
 
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
 <script>
-/* =============== shared helpers =============== */
-const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const F={load:(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}},save:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-if(typeof sendTelegram==='undefined'){function sendTelegram(){console.log("Telegram not ready")}}  /* ✅ Step 1 safety */
-const KEYS={partners:'omni_partners', jobs:'omni_jobs', reviews:'omni_reviews'};
+const $=(s)=>document.querySelector(s);
+function showToast(txt){const t=$("#toast");t.textContent=txt;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2000);}
+function Fload(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d));}catch(e){return d;}}
+function Fsave(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function me(){return Fload("current_contractor",null);}
+function saveMe(v){Fsave("current_contractor",v);Fsave("omni_partners",Fload("omni_partners",[]).map(x=>x.phone===v.phone?v:x));}
 
-/* === rest of your dashboard logic unchanged === */
+$("#loginBtn").onclick=()=>{
+  const ph=$("#loginPhone").value.replace(/\D/g,""), pw=$("#loginPass").value.trim();
+  const list=Fload("omni_partners",[]); const p=list.find(x=>x.phone===ph&&x.pass===pw);
+  if(!p) return alert("Wrong login."); Fsave("current_contractor",p);
+  $("#authScreen").classList.add("hidden"); $("#dash").classList.remove("hidden");
+  showDashboard();
+};
+$("#logoutBtn").onclick=()=>{localStorage.removeItem("current_contractor");location.reload();};
 
-/* =============== settings actions (updated) =============== */
-$("#saveTG").onclick=async()=>{
+/* ===== Dashboard render ===== */
+function showDashboard(){
+  const p=me(); if(!p) return;
+  $("#billNote").textContent=localStorage.getItem("omni_billing_note")||"Pay OmniSolutions – FNB Acc 628900000 – Branch 250655 – Ref: Your Business Name";
+  const js=Fload("omni_jobs",[]).filter(j=>j.contractorPhone===p.phone);
+  $("#kpiLeads").textContent=js.length;
+  let profit=0; js.forEach(j=>{profit+=parseFloat(j.price||0)||0;});
+  $("#kpiProfit").textContent="R"+profit.toFixed(0);
+  const revs=Fload("omni_reviews",[]).filter(r=>r.contractorPhone===p.phone);
+  const avg=revs.length? (revs.reduce((a,b)=>a+b.stars,0)/revs.length).toFixed(1):"0";
+  $("#kpiRating").textContent=avg+"★";
+
+  const tbody=$("#jobTable tbody"); tbody.innerHTML="";
+  js.forEach(j=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${j.id}</td><td>${j.customerName||""}</td><td>${j.customerPhone||""}</td><td>${j.area||""}</td><td>${j.service||""}</td><td contenteditable>${j.price||""}</td><td>${j.status||"Pending"}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // messages
+  const msgs=Fload("omni_msgs_"+p.phone,[]);
+  const box=$("#msgBox"); box.innerHTML=msgs.map(m=>`<div>${m.when.split("T")[0]} — <b>${m.from}:</b> ${m.text}</div>`).join("")||"No messages";
+
+  const ctx=document.getElementById("progressChart").getContext("2d");
+  const dataByMonth={};
+  js.forEach(j=>{
+    const m=new Date(j.created).toLocaleString("en",{month:"short"});
+    dataByMonth[m]=(dataByMonth[m]||0)+parseFloat(j.price||0)||0;
+  });
+  new Chart(ctx,{type:"line",data:{labels:Object.keys(dataByMonth),datasets:[{label:"Monthly Profit (R)",data:Object.values(dataByMonth)}]},options:{plugins:{legend:{display:false}}}});
+}
+
+/* ===== Telegram save + test ===== */
+$("#saveTG").onclick=()=>{
   const p=me(); if(!p) return;
   p.tgToken=$("#botToken").value.trim();
   p.tgChat=$("#chatId").value.trim();
   saveMe(p);
-  showToast("Telegram saved ✓");
-  if(p.tgToken && p.tgChat){
-    await sendTelegram(p.tgToken,p.tgChat,"🤖 Telegram linked successfully! You’ll now receive job leads here.");
-  }
+  showToast("Telegram saved!");
 };
 
-/* other settings buttons stay the same */
-
-/* =============== tab default and boot =============== */
-(function boot(){
-  if(localStorage.getItem('contractor_phone')) openDash();
-  if(typeof addTelegramTestButton==='function') addTelegramTestButton();  /* ✅ Step 2 load test button */
-})();
+$("#testTG").onclick=async()=>{
+  const p=me(); if(!p) return alert("Login first.");
+  if(!p.tgToken || !p.tgChat) return alert("Enter and save your BOT TOKEN + CHAT ID first.");
+  try{
+    await fetch(`https://api.telegram.org/bot${p.tgToken}/sendMessage`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:p.tgChat,text:"✅ Test message from OmniSolutions contractor dashboard",parse_mode:"Markdown"})
+    });
+    showToast("Test message sent!");
+  }catch(e){alert("Failed to send test message. Check BOT TOKEN or CHAT ID.");}
+};
 </script>
 </body>
 </html>
